@@ -6,13 +6,11 @@ Unused terminals:
     EQ
     GEQ
     GT
-    LCBracket
     LEQ
     LT
     NEQ
     NOT
     OR
-    RCBracket
 
 Grammar
 
@@ -26,8 +24,9 @@ Rule 6     Expre -> Expre SUB Expre
 Rule 7     Expre -> Expre MULT Expre
 Rule 8     Expre -> Expre DIV Expre
 Rule 9     Expre -> Expre MOD Expre
-Rule 10    Expre -> ID
-Rule 11    Expre -> NUM
+Rule 10    Expre -> LParen Expre RParen
+Rule 11    Expre -> ID
+Rule 12    Expre -> NUM
 
 Terminals, with rules where they appear
 
@@ -38,17 +37,17 @@ DIV                  : 8
 EQ                   : 
 GEQ                  : 
 GT                   : 
-ID                   : 4 10
-LCBracket            : 
+ID                   : 4 11
 LEQ                  : 
+LParen               : 10
 LT                   : 
 MOD                  : 9
 MULT                 : 7
 NEQ                  : 
 NOT                  : 
-NUM                  : 11
+NUM                  : 12
 OR                   : 
-RCBracket            : 
+RParen               : 10
 SUB                  : 6
 SUM                  : 5
 error                : 
@@ -57,7 +56,7 @@ Nonterminals, with rules where they appear
 
 Atrib                : 2 3
 Atribs               : 1 3
-Expre                : 4 5 5 6 6 7 7 8 8 9 9
+Expre                : 4 5 5 6 6 7 7 8 8 9 9 10
 ExpressionInit       : 0
 
 Parsing method: LALR
@@ -130,11 +129,13 @@ state 7
     (7) Expre -> . Expre MULT Expre
     (8) Expre -> . Expre DIV Expre
     (9) Expre -> . Expre MOD Expre
-    (10) Expre -> . ID
-    (11) Expre -> . NUM
+    (10) Expre -> . LParen Expre RParen
+    (11) Expre -> . ID
+    (12) Expre -> . NUM
 
+    LParen          shift and go to state 11
     ID              shift and go to state 9
-    NUM             shift and go to state 11
+    NUM             shift and go to state 12
 
     Expre                          shift and go to state 10
 
@@ -148,14 +149,15 @@ state 8
 
 state 9
 
-    (10) Expre -> ID .
+    (11) Expre -> ID .
 
-    SUM             reduce using rule 10 (Expre -> ID .)
-    SUB             reduce using rule 10 (Expre -> ID .)
-    MULT            reduce using rule 10 (Expre -> ID .)
-    DIV             reduce using rule 10 (Expre -> ID .)
-    MOD             reduce using rule 10 (Expre -> ID .)
-    ;               reduce using rule 10 (Expre -> ID .)
+    SUM             reduce using rule 11 (Expre -> ID .)
+    SUB             reduce using rule 11 (Expre -> ID .)
+    MULT            reduce using rule 11 (Expre -> ID .)
+    DIV             reduce using rule 11 (Expre -> ID .)
+    MOD             reduce using rule 11 (Expre -> ID .)
+    ;               reduce using rule 11 (Expre -> ID .)
+    RParen          reduce using rule 11 (Expre -> ID .)
 
 
 state 10
@@ -168,26 +170,45 @@ state 10
     (9) Expre -> Expre . MOD Expre
 
     ;               reduce using rule 4 (Atrib -> ID ATRIB Expre .)
-    SUM             shift and go to state 12
-    SUB             shift and go to state 13
-    MULT            shift and go to state 14
-    DIV             shift and go to state 15
-    MOD             shift and go to state 16
+    SUM             shift and go to state 13
+    SUB             shift and go to state 14
+    MULT            shift and go to state 15
+    DIV             shift and go to state 16
+    MOD             shift and go to state 17
 
 
 state 11
 
-    (11) Expre -> NUM .
+    (10) Expre -> LParen . Expre RParen
+    (5) Expre -> . Expre SUM Expre
+    (6) Expre -> . Expre SUB Expre
+    (7) Expre -> . Expre MULT Expre
+    (8) Expre -> . Expre DIV Expre
+    (9) Expre -> . Expre MOD Expre
+    (10) Expre -> . LParen Expre RParen
+    (11) Expre -> . ID
+    (12) Expre -> . NUM
 
-    SUM             reduce using rule 11 (Expre -> NUM .)
-    SUB             reduce using rule 11 (Expre -> NUM .)
-    MULT            reduce using rule 11 (Expre -> NUM .)
-    DIV             reduce using rule 11 (Expre -> NUM .)
-    MOD             reduce using rule 11 (Expre -> NUM .)
-    ;               reduce using rule 11 (Expre -> NUM .)
+    LParen          shift and go to state 11
+    ID              shift and go to state 9
+    NUM             shift and go to state 12
 
+    Expre                          shift and go to state 18
 
 state 12
+
+    (12) Expre -> NUM .
+
+    SUM             reduce using rule 12 (Expre -> NUM .)
+    SUB             reduce using rule 12 (Expre -> NUM .)
+    MULT            reduce using rule 12 (Expre -> NUM .)
+    DIV             reduce using rule 12 (Expre -> NUM .)
+    MOD             reduce using rule 12 (Expre -> NUM .)
+    ;               reduce using rule 12 (Expre -> NUM .)
+    RParen          reduce using rule 12 (Expre -> NUM .)
+
+
+state 13
 
     (5) Expre -> Expre SUM . Expre
     (5) Expre -> . Expre SUM Expre
@@ -195,15 +216,17 @@ state 12
     (7) Expre -> . Expre MULT Expre
     (8) Expre -> . Expre DIV Expre
     (9) Expre -> . Expre MOD Expre
-    (10) Expre -> . ID
-    (11) Expre -> . NUM
+    (10) Expre -> . LParen Expre RParen
+    (11) Expre -> . ID
+    (12) Expre -> . NUM
 
+    LParen          shift and go to state 11
     ID              shift and go to state 9
-    NUM             shift and go to state 11
+    NUM             shift and go to state 12
 
-    Expre                          shift and go to state 17
+    Expre                          shift and go to state 19
 
-state 13
+state 14
 
     (6) Expre -> Expre SUB . Expre
     (5) Expre -> . Expre SUM Expre
@@ -211,15 +234,17 @@ state 13
     (7) Expre -> . Expre MULT Expre
     (8) Expre -> . Expre DIV Expre
     (9) Expre -> . Expre MOD Expre
-    (10) Expre -> . ID
-    (11) Expre -> . NUM
+    (10) Expre -> . LParen Expre RParen
+    (11) Expre -> . ID
+    (12) Expre -> . NUM
 
+    LParen          shift and go to state 11
     ID              shift and go to state 9
-    NUM             shift and go to state 11
+    NUM             shift and go to state 12
 
-    Expre                          shift and go to state 18
+    Expre                          shift and go to state 20
 
-state 14
+state 15
 
     (7) Expre -> Expre MULT . Expre
     (5) Expre -> . Expre SUM Expre
@@ -227,15 +252,17 @@ state 14
     (7) Expre -> . Expre MULT Expre
     (8) Expre -> . Expre DIV Expre
     (9) Expre -> . Expre MOD Expre
-    (10) Expre -> . ID
-    (11) Expre -> . NUM
+    (10) Expre -> . LParen Expre RParen
+    (11) Expre -> . ID
+    (12) Expre -> . NUM
 
+    LParen          shift and go to state 11
     ID              shift and go to state 9
-    NUM             shift and go to state 11
+    NUM             shift and go to state 12
 
-    Expre                          shift and go to state 19
+    Expre                          shift and go to state 21
 
-state 15
+state 16
 
     (8) Expre -> Expre DIV . Expre
     (5) Expre -> . Expre SUM Expre
@@ -243,15 +270,17 @@ state 15
     (7) Expre -> . Expre MULT Expre
     (8) Expre -> . Expre DIV Expre
     (9) Expre -> . Expre MOD Expre
-    (10) Expre -> . ID
-    (11) Expre -> . NUM
+    (10) Expre -> . LParen Expre RParen
+    (11) Expre -> . ID
+    (12) Expre -> . NUM
 
+    LParen          shift and go to state 11
     ID              shift and go to state 9
-    NUM             shift and go to state 11
+    NUM             shift and go to state 12
 
-    Expre                          shift and go to state 20
+    Expre                          shift and go to state 22
 
-state 16
+state 17
 
     (9) Expre -> Expre MOD . Expre
     (5) Expre -> . Expre SUM Expre
@@ -259,15 +288,34 @@ state 16
     (7) Expre -> . Expre MULT Expre
     (8) Expre -> . Expre DIV Expre
     (9) Expre -> . Expre MOD Expre
-    (10) Expre -> . ID
-    (11) Expre -> . NUM
+    (10) Expre -> . LParen Expre RParen
+    (11) Expre -> . ID
+    (12) Expre -> . NUM
 
+    LParen          shift and go to state 11
     ID              shift and go to state 9
-    NUM             shift and go to state 11
+    NUM             shift and go to state 12
 
-    Expre                          shift and go to state 21
+    Expre                          shift and go to state 23
 
-state 17
+state 18
+
+    (10) Expre -> LParen Expre . RParen
+    (5) Expre -> Expre . SUM Expre
+    (6) Expre -> Expre . SUB Expre
+    (7) Expre -> Expre . MULT Expre
+    (8) Expre -> Expre . DIV Expre
+    (9) Expre -> Expre . MOD Expre
+
+    RParen          shift and go to state 24
+    SUM             shift and go to state 13
+    SUB             shift and go to state 14
+    MULT            shift and go to state 15
+    DIV             shift and go to state 16
+    MOD             shift and go to state 17
+
+
+state 19
 
     (5) Expre -> Expre SUM Expre .
     (5) Expre -> Expre . SUM Expre
@@ -276,26 +324,22 @@ state 17
     (8) Expre -> Expre . DIV Expre
     (9) Expre -> Expre . MOD Expre
 
-  ! shift/reduce conflict for SUM resolved as shift
-  ! shift/reduce conflict for SUB resolved as shift
-  ! shift/reduce conflict for MULT resolved as shift
-  ! shift/reduce conflict for DIV resolved as shift
-  ! shift/reduce conflict for MOD resolved as shift
+    SUM             reduce using rule 5 (Expre -> Expre SUM Expre .)
+    SUB             reduce using rule 5 (Expre -> Expre SUM Expre .)
     ;               reduce using rule 5 (Expre -> Expre SUM Expre .)
-    SUM             shift and go to state 12
-    SUB             shift and go to state 13
-    MULT            shift and go to state 14
-    DIV             shift and go to state 15
-    MOD             shift and go to state 16
+    RParen          reduce using rule 5 (Expre -> Expre SUM Expre .)
+    MULT            shift and go to state 15
+    DIV             shift and go to state 16
+    MOD             shift and go to state 17
 
-  ! SUM             [ reduce using rule 5 (Expre -> Expre SUM Expre .) ]
-  ! SUB             [ reduce using rule 5 (Expre -> Expre SUM Expre .) ]
   ! MULT            [ reduce using rule 5 (Expre -> Expre SUM Expre .) ]
   ! DIV             [ reduce using rule 5 (Expre -> Expre SUM Expre .) ]
   ! MOD             [ reduce using rule 5 (Expre -> Expre SUM Expre .) ]
+  ! SUM             [ shift and go to state 13 ]
+  ! SUB             [ shift and go to state 14 ]
 
 
-state 18
+state 20
 
     (6) Expre -> Expre SUB Expre .
     (5) Expre -> Expre . SUM Expre
@@ -304,26 +348,22 @@ state 18
     (8) Expre -> Expre . DIV Expre
     (9) Expre -> Expre . MOD Expre
 
-  ! shift/reduce conflict for SUM resolved as shift
-  ! shift/reduce conflict for SUB resolved as shift
-  ! shift/reduce conflict for MULT resolved as shift
-  ! shift/reduce conflict for DIV resolved as shift
-  ! shift/reduce conflict for MOD resolved as shift
+    SUM             reduce using rule 6 (Expre -> Expre SUB Expre .)
+    SUB             reduce using rule 6 (Expre -> Expre SUB Expre .)
     ;               reduce using rule 6 (Expre -> Expre SUB Expre .)
-    SUM             shift and go to state 12
-    SUB             shift and go to state 13
-    MULT            shift and go to state 14
-    DIV             shift and go to state 15
-    MOD             shift and go to state 16
+    RParen          reduce using rule 6 (Expre -> Expre SUB Expre .)
+    MULT            shift and go to state 15
+    DIV             shift and go to state 16
+    MOD             shift and go to state 17
 
-  ! SUM             [ reduce using rule 6 (Expre -> Expre SUB Expre .) ]
-  ! SUB             [ reduce using rule 6 (Expre -> Expre SUB Expre .) ]
   ! MULT            [ reduce using rule 6 (Expre -> Expre SUB Expre .) ]
   ! DIV             [ reduce using rule 6 (Expre -> Expre SUB Expre .) ]
   ! MOD             [ reduce using rule 6 (Expre -> Expre SUB Expre .) ]
+  ! SUM             [ shift and go to state 13 ]
+  ! SUB             [ shift and go to state 14 ]
 
 
-state 19
+state 21
 
     (7) Expre -> Expre MULT Expre .
     (5) Expre -> Expre . SUM Expre
@@ -332,26 +372,22 @@ state 19
     (8) Expre -> Expre . DIV Expre
     (9) Expre -> Expre . MOD Expre
 
-  ! shift/reduce conflict for SUM resolved as shift
-  ! shift/reduce conflict for SUB resolved as shift
-  ! shift/reduce conflict for MULT resolved as shift
-  ! shift/reduce conflict for DIV resolved as shift
-  ! shift/reduce conflict for MOD resolved as shift
+    SUM             reduce using rule 7 (Expre -> Expre MULT Expre .)
+    SUB             reduce using rule 7 (Expre -> Expre MULT Expre .)
+    MULT            reduce using rule 7 (Expre -> Expre MULT Expre .)
+    DIV             reduce using rule 7 (Expre -> Expre MULT Expre .)
+    MOD             reduce using rule 7 (Expre -> Expre MULT Expre .)
     ;               reduce using rule 7 (Expre -> Expre MULT Expre .)
-    SUM             shift and go to state 12
-    SUB             shift and go to state 13
-    MULT            shift and go to state 14
-    DIV             shift and go to state 15
-    MOD             shift and go to state 16
+    RParen          reduce using rule 7 (Expre -> Expre MULT Expre .)
 
-  ! SUM             [ reduce using rule 7 (Expre -> Expre MULT Expre .) ]
-  ! SUB             [ reduce using rule 7 (Expre -> Expre MULT Expre .) ]
-  ! MULT            [ reduce using rule 7 (Expre -> Expre MULT Expre .) ]
-  ! DIV             [ reduce using rule 7 (Expre -> Expre MULT Expre .) ]
-  ! MOD             [ reduce using rule 7 (Expre -> Expre MULT Expre .) ]
+  ! SUM             [ shift and go to state 13 ]
+  ! SUB             [ shift and go to state 14 ]
+  ! MULT            [ shift and go to state 15 ]
+  ! DIV             [ shift and go to state 16 ]
+  ! MOD             [ shift and go to state 17 ]
 
 
-state 20
+state 22
 
     (8) Expre -> Expre DIV Expre .
     (5) Expre -> Expre . SUM Expre
@@ -360,26 +396,22 @@ state 20
     (8) Expre -> Expre . DIV Expre
     (9) Expre -> Expre . MOD Expre
 
-  ! shift/reduce conflict for SUM resolved as shift
-  ! shift/reduce conflict for SUB resolved as shift
-  ! shift/reduce conflict for MULT resolved as shift
-  ! shift/reduce conflict for DIV resolved as shift
-  ! shift/reduce conflict for MOD resolved as shift
+    SUM             reduce using rule 8 (Expre -> Expre DIV Expre .)
+    SUB             reduce using rule 8 (Expre -> Expre DIV Expre .)
+    MULT            reduce using rule 8 (Expre -> Expre DIV Expre .)
+    DIV             reduce using rule 8 (Expre -> Expre DIV Expre .)
+    MOD             reduce using rule 8 (Expre -> Expre DIV Expre .)
     ;               reduce using rule 8 (Expre -> Expre DIV Expre .)
-    SUM             shift and go to state 12
-    SUB             shift and go to state 13
-    MULT            shift and go to state 14
-    DIV             shift and go to state 15
-    MOD             shift and go to state 16
+    RParen          reduce using rule 8 (Expre -> Expre DIV Expre .)
 
-  ! SUM             [ reduce using rule 8 (Expre -> Expre DIV Expre .) ]
-  ! SUB             [ reduce using rule 8 (Expre -> Expre DIV Expre .) ]
-  ! MULT            [ reduce using rule 8 (Expre -> Expre DIV Expre .) ]
-  ! DIV             [ reduce using rule 8 (Expre -> Expre DIV Expre .) ]
-  ! MOD             [ reduce using rule 8 (Expre -> Expre DIV Expre .) ]
+  ! SUM             [ shift and go to state 13 ]
+  ! SUB             [ shift and go to state 14 ]
+  ! MULT            [ shift and go to state 15 ]
+  ! DIV             [ shift and go to state 16 ]
+  ! MOD             [ shift and go to state 17 ]
 
 
-state 21
+state 23
 
     (9) Expre -> Expre MOD Expre .
     (5) Expre -> Expre . SUM Expre
@@ -388,49 +420,30 @@ state 21
     (8) Expre -> Expre . DIV Expre
     (9) Expre -> Expre . MOD Expre
 
-  ! shift/reduce conflict for SUM resolved as shift
-  ! shift/reduce conflict for SUB resolved as shift
-  ! shift/reduce conflict for MULT resolved as shift
-  ! shift/reduce conflict for DIV resolved as shift
-  ! shift/reduce conflict for MOD resolved as shift
+    SUM             reduce using rule 9 (Expre -> Expre MOD Expre .)
+    SUB             reduce using rule 9 (Expre -> Expre MOD Expre .)
+    MULT            reduce using rule 9 (Expre -> Expre MOD Expre .)
+    DIV             reduce using rule 9 (Expre -> Expre MOD Expre .)
+    MOD             reduce using rule 9 (Expre -> Expre MOD Expre .)
     ;               reduce using rule 9 (Expre -> Expre MOD Expre .)
-    SUM             shift and go to state 12
-    SUB             shift and go to state 13
-    MULT            shift and go to state 14
-    DIV             shift and go to state 15
-    MOD             shift and go to state 16
+    RParen          reduce using rule 9 (Expre -> Expre MOD Expre .)
 
-  ! SUM             [ reduce using rule 9 (Expre -> Expre MOD Expre .) ]
-  ! SUB             [ reduce using rule 9 (Expre -> Expre MOD Expre .) ]
-  ! MULT            [ reduce using rule 9 (Expre -> Expre MOD Expre .) ]
-  ! DIV             [ reduce using rule 9 (Expre -> Expre MOD Expre .) ]
-  ! MOD             [ reduce using rule 9 (Expre -> Expre MOD Expre .) ]
+  ! SUM             [ shift and go to state 13 ]
+  ! SUB             [ shift and go to state 14 ]
+  ! MULT            [ shift and go to state 15 ]
+  ! DIV             [ shift and go to state 16 ]
+  ! MOD             [ shift and go to state 17 ]
 
-WARNING: 
-WARNING: Conflicts:
-WARNING: 
-WARNING: shift/reduce conflict for SUM in state 17 resolved as shift
-WARNING: shift/reduce conflict for SUB in state 17 resolved as shift
-WARNING: shift/reduce conflict for MULT in state 17 resolved as shift
-WARNING: shift/reduce conflict for DIV in state 17 resolved as shift
-WARNING: shift/reduce conflict for MOD in state 17 resolved as shift
-WARNING: shift/reduce conflict for SUM in state 18 resolved as shift
-WARNING: shift/reduce conflict for SUB in state 18 resolved as shift
-WARNING: shift/reduce conflict for MULT in state 18 resolved as shift
-WARNING: shift/reduce conflict for DIV in state 18 resolved as shift
-WARNING: shift/reduce conflict for MOD in state 18 resolved as shift
-WARNING: shift/reduce conflict for SUM in state 19 resolved as shift
-WARNING: shift/reduce conflict for SUB in state 19 resolved as shift
-WARNING: shift/reduce conflict for MULT in state 19 resolved as shift
-WARNING: shift/reduce conflict for DIV in state 19 resolved as shift
-WARNING: shift/reduce conflict for MOD in state 19 resolved as shift
-WARNING: shift/reduce conflict for SUM in state 20 resolved as shift
-WARNING: shift/reduce conflict for SUB in state 20 resolved as shift
-WARNING: shift/reduce conflict for MULT in state 20 resolved as shift
-WARNING: shift/reduce conflict for DIV in state 20 resolved as shift
-WARNING: shift/reduce conflict for MOD in state 20 resolved as shift
-WARNING: shift/reduce conflict for SUM in state 21 resolved as shift
-WARNING: shift/reduce conflict for SUB in state 21 resolved as shift
-WARNING: shift/reduce conflict for MULT in state 21 resolved as shift
-WARNING: shift/reduce conflict for DIV in state 21 resolved as shift
-WARNING: shift/reduce conflict for MOD in state 21 resolved as shift
+
+state 24
+
+    (10) Expre -> LParen Expre RParen .
+
+    SUM             reduce using rule 10 (Expre -> LParen Expre RParen .)
+    SUB             reduce using rule 10 (Expre -> LParen Expre RParen .)
+    MULT            reduce using rule 10 (Expre -> LParen Expre RParen .)
+    DIV             reduce using rule 10 (Expre -> LParen Expre RParen .)
+    MOD             reduce using rule 10 (Expre -> LParen Expre RParen .)
+    ;               reduce using rule 10 (Expre -> LParen Expre RParen .)
+    RParen          reduce using rule 10 (Expre -> LParen Expre RParen .)
+

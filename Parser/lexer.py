@@ -5,18 +5,18 @@ class LexerPySMT(object):
     tokens = [
         'NUM',
         'ID',
-        'ATRIB', # = 
-        'OR', # ||
-        'AND', # &&
-        'EQ', # == 
-        'LEQ',  # <= - (less or equal)
-        'GEQ',  # >= - (greater or equal)
-        'GT',   # >  - (greater than)
-        'LT',   # <  - (less than)
-        'NEQ',  # != - (not equal -> NEQ -> NECC)
-        'NOT',  # !  - (not)
-        'LCBracket',
-        'RCBracket',
+        'ATRIB', # =
+        'OR',    # ||
+        'AND',   # &&
+        'EQ',    # == 
+        'LEQ',   # <= - (less or equal)
+        'GEQ',   # >= - (greater or equal)
+        'GT',    # >  - (greater than)
+        'LT',    # <  - (less than)
+        'NEQ',   # != - (not equal -> NEQ -> NECC)
+        'NOT',   # !  - (not)
+        'LParen',
+        'RParen',
         'SUM',
         'SUB',
         'DIV',
@@ -30,17 +30,19 @@ class LexerPySMT(object):
     t_NOT = r'\!'
     t_OR = r'\|\|'
     t_AND = r'\&\&'
-    t_MOD = r'\%'
     t_SUM = r'\+'
     t_SUB = r'\-'
-    t_DIV = r'\/'
     t_MULT = r'\*'
+    t_DIV = r'\/'
+    t_MOD = r'\%'
     t_LEQ = r'\<\='
     t_GEQ = r'\>\='
     t_GT = r'\>'
     t_LT = r'\<'
     t_EQ = r'\=\='
     t_ATRIB = r'\='
+    t_LParen = r'\('
+    t_RParen = r'\)'
 
     def t_NUM(self, t):
         r'\d+'
@@ -50,9 +52,7 @@ class LexerPySMT(object):
         r'\w+'
         return t
 
-    t_LCBracket = r'\('
-    t_RCBracket = r'\)'
-    t_ignore = ' '
+    t_ignore = ' \n\t\r'
 
 
 
@@ -73,7 +73,7 @@ class LexerPySMT(object):
     def t_error(self, t):
         print("Illegal character '%s'" % t.value[0])
         t.lexer.skip(1)
-        return
+        return None
 
 with open(f"tests/{sys.argv[1]}.txt") as f:
     content = f.read()

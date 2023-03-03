@@ -6,9 +6,9 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = "ExpressionInitAND ATRIB DIV EQ GEQ GT ID LCBracket LEQ LT MOD MULT NEQ NOT NUM OR RCBracket SUB SUMExpressionInit : AtribsAtribs : Atrib ';'\n              | Atribs Atrib ';'Atrib : ID ATRIB ExpreExpre : Expre SUM Expre\n             | Expre SUB Expre\n             | Expre MULT Expre\n             | Expre DIV Expre\n             | Expre MOD ExpreExpre : IDExpre : NUM"
+_lr_signature = "ExpressionInitleftSUMSUBleftMULTDIVMODAND ATRIB DIV EQ GEQ GT ID LEQ LParen LT MOD MULT NEQ NOT NUM OR RParen SUB SUMExpressionInit : AtribsAtribs : Atrib ';'\n                | Atribs Atrib ';'Atrib : ID ATRIB ExpreExpre : Expre SUM Expre\n                | Expre SUB Expre\n                | Expre MULT Expre\n                | Expre DIV Expre\n                | Expre MOD ExpreExpre : LParen Expre RParenExpre : IDExpre : NUM"
     
-_lr_action_items = {'ID':([0,2,6,7,8,12,13,14,15,16,],[4,4,-2,9,-3,9,9,9,9,9,]),'$end':([1,2,6,8,],[0,-1,-2,-3,]),';':([3,5,9,10,11,17,18,19,20,21,],[6,8,-10,-4,-11,-5,-6,-7,-8,-9,]),'ATRIB':([4,],[7,]),'NUM':([7,12,13,14,15,16,],[11,11,11,11,11,11,]),'SUM':([9,10,11,17,18,19,20,21,],[-10,12,-11,12,12,12,12,12,]),'SUB':([9,10,11,17,18,19,20,21,],[-10,13,-11,13,13,13,13,13,]),'MULT':([9,10,11,17,18,19,20,21,],[-10,14,-11,14,14,14,14,14,]),'DIV':([9,10,11,17,18,19,20,21,],[-10,15,-11,15,15,15,15,15,]),'MOD':([9,10,11,17,18,19,20,21,],[-10,16,-11,16,16,16,16,16,]),}
+_lr_action_items = {'ID':([0,2,6,7,8,11,13,14,15,16,17,],[4,4,-2,9,-3,9,9,9,9,9,9,]),'$end':([1,2,6,8,],[0,-1,-2,-3,]),';':([3,5,9,10,12,19,20,21,22,23,24,],[6,8,-11,-4,-12,-5,-6,-7,-8,-9,-10,]),'ATRIB':([4,],[7,]),'LParen':([7,11,13,14,15,16,17,],[11,11,11,11,11,11,11,]),'NUM':([7,11,13,14,15,16,17,],[12,12,12,12,12,12,12,]),'SUM':([9,10,12,18,19,20,21,22,23,24,],[-11,13,-12,13,-5,-6,-7,-8,-9,-10,]),'SUB':([9,10,12,18,19,20,21,22,23,24,],[-11,14,-12,14,-5,-6,-7,-8,-9,-10,]),'MULT':([9,10,12,18,19,20,21,22,23,24,],[-11,15,-12,15,15,15,-7,-8,-9,-10,]),'DIV':([9,10,12,18,19,20,21,22,23,24,],[-11,16,-12,16,16,16,-7,-8,-9,-10,]),'MOD':([9,10,12,18,19,20,21,22,23,24,],[-11,17,-12,17,17,17,-7,-8,-9,-10,]),'RParen':([9,12,18,19,20,21,22,23,24,],[-11,-12,24,-5,-6,-7,-8,-9,-10,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -17,7 +17,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'ExpressionInit':([0,],[1,]),'Atribs':([0,],[2,]),'Atrib':([0,2,],[3,5,]),'Expre':([7,12,13,14,15,16,],[10,17,18,19,20,21,]),}
+_lr_goto_items = {'ExpressionInit':([0,],[1,]),'Atribs':([0,],[2,]),'Atrib':([0,2,],[3,5,]),'Expre':([7,11,13,14,15,16,17,],[10,18,19,20,21,22,23,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -27,15 +27,16 @@ for _k, _v in _lr_goto_items.items():
 del _lr_goto_items
 _lr_productions = [
   ("S' -> ExpressionInit","S'",1,None,None,None),
-  ('ExpressionInit -> Atribs','ExpressionInit',1,'p_Expression_Init','yacc.py',8),
-  ('Atribs -> Atrib ;','Atribs',2,'p_Atribs','yacc.py',12),
-  ('Atribs -> Atribs Atrib ;','Atribs',3,'p_Atribs','yacc.py',13),
-  ('Atrib -> ID ATRIB Expre','Atrib',3,'p_Atrib','yacc.py',20),
-  ('Expre -> Expre SUM Expre','Expre',3,'p_Expre','yacc.py',32),
-  ('Expre -> Expre SUB Expre','Expre',3,'p_Expre','yacc.py',33),
-  ('Expre -> Expre MULT Expre','Expre',3,'p_Expre','yacc.py',34),
-  ('Expre -> Expre DIV Expre','Expre',3,'p_Expre','yacc.py',35),
-  ('Expre -> Expre MOD Expre','Expre',3,'p_Expre','yacc.py',36),
-  ('Expre -> ID','Expre',1,'p_Expre_ID','yacc.py',40),
-  ('Expre -> NUM','Expre',1,'p_Expre_NUM','yacc.py',44),
+  ('ExpressionInit -> Atribs','ExpressionInit',1,'p_Expression_Init','yacc.py',30),
+  ('Atribs -> Atrib ;','Atribs',2,'p_Atribs','yacc.py',35),
+  ('Atribs -> Atribs Atrib ;','Atribs',3,'p_Atribs','yacc.py',36),
+  ('Atrib -> ID ATRIB Expre','Atrib',3,'p_Atrib','yacc.py',44),
+  ('Expre -> Expre SUM Expre','Expre',3,'p_Expre','yacc.py',48),
+  ('Expre -> Expre SUB Expre','Expre',3,'p_Expre','yacc.py',49),
+  ('Expre -> Expre MULT Expre','Expre',3,'p_Expre','yacc.py',50),
+  ('Expre -> Expre DIV Expre','Expre',3,'p_Expre','yacc.py',51),
+  ('Expre -> Expre MOD Expre','Expre',3,'p_Expre','yacc.py',52),
+  ('Expre -> LParen Expre RParen','Expre',3,'p_Expre_Paren','yacc.py',58),
+  ('Expre -> ID','Expre',1,'p_Expre_ID','yacc.py',62),
+  ('Expre -> NUM','Expre',1,'p_Expre_NUM','yacc.py',66),
 ]

@@ -1,50 +1,78 @@
-from lexer import lexer, LexerPySMT
+from lexer import LexerPySMT
 import ast
 import ply.yacc as yacc
 import sys
 
 # ---------------- Programa Simples----------------
-def p_Expression_Init(p):
-    "ExpressionInit : Atribs"
-    parser.PySMT = f"{p[1]}"
-
-def p_Atribs(p):
-    """Atribs : Atrib ';'
-              | Atribs Atrib ';'"""
-    if len(p) == 3:
-        p[0] = f'{p[1]}{p[2]}'
-    else:
-        p[0] = f'{p[1]}'
+class ParserPySMT(object):
+    def __init__(self):
+        self.arith_map = {
+            "+": "BVAdd",
+            "-": "BVSub",
+            "*": "BVMul",
+            "/": "BVDiv",
+            "%": "BVURem",
+        }
+        self.precedence = (
+            ('left', 'SUM', 'SUB'),
+            ('left', 'MULT', 'DIV', 'MOD'),
+        )
+        self.tokens = LexerPySMT.tokens
+        self.lexer = LexerPySMT()
+        self.parser = yacc.yacc(start="ExpressionInit", module=self)
     
-def p_Atrib(p):
-    """Atrib : ID ATRIB Expre"""
-    p[0] = f'Equals(prox[\'{p[1]}\'], {p[3]})'
+    def compile(self, code):
+        self.parser.PySMT = ""
+        self.parser.parse(code, lexer=self.lexer.lexer)
+        return self.parser.PySMT
 
-arith_map = {
-    "+": "BVAdd",
-    "-": "BVSub",
-    "*": "BVMul",
-    "/": "BVDiv",
-    "%": "BVURem",
-}
+    def p_Expression_Init(self, p):
+        "ExpressionInit : Atribs"
+        self.parser.PySMT = f"{p[1]}"
 
-def p_Expre(p):
-    """Expre : Expre SUM Expre
-             | Expre SUB Expre
-             | Expre MULT Expre
-             | Expre DIV Expre
-             | Expre MOD Expre"""
-    p[0] = f'{arith_map[p[2]]}( {p[1]}, {p[3]} )'
+    def p_Atribs(self, p):
+        """Atribs : Atrib ';'
+                | Atribs Atrib ';'"""
+        if len(p) == 3:
+            p[0] = f"{p[1]}"
+        else:
+            p[0] = f"And({p[1]},{p[2]})"
+        
+    def p_Atrib(self, p):
+        """Atrib : ID ATRIB Expre"""
+        p[0] = f"Equals(prox['{p[1]}'], {p[3]})"
 
-def p_Expre_ID(p):
-    """Expre : ID"""
-    p[0] = f'curr[\'{p[1]}\']'
+    def p_Expre(self, p):
+        """Expre : Expre SUM Expre
+                | Expre SUB Expre
+                | Expre MULT Expre
+                | Expre DIV Expre
+                | Expre MOD Expre"""
+        p[0] = f"{self.arith_map[p[2]]}({p[1]}, {p[3]})"
 
-def p_Expre_NUM(p):
-    """Expre : NUM"""
-    p[0] = f'BV({p[1]}, 16)'
+    def p_Expre_Paren(self, p):
+        """Expre : LParen Expre RParen"""
+        p[0] = f"({p[2]})"
+
+    def p_Expre_ID(self, p):
+        """Expre : ID"""
+        p[0] = f"curr['{p[1]}']"
+
+    def p_Expre_NUM(self, p):
+        """Expre : NUM"""
+        p[0] = f"BV({p[1]}, 16)"
+
+    def p_error(self, p):
+        print('Syntax error!\np -> ', p)
+        self.parser.sucesso = False
 
 
+with open(f"tests/{sys.argv[1]}.txt") as f:
+    content = f.read()
+
+text = ParserPySMT().compile(content)
+
+print(text)
 
 # ---------------- Programa Mais Avançado----------------
 '''
@@ -70,21 +98,3 @@ condition_map ={
     "<=": "BVULE\n",
 }
 '''
-def p_error(p):
-    print('Syntax error!\np -> ', p)
-    parser.sucesso = False
-
-tokens = LexerPySMT.tokens
-lexer = LexerPySMT()
-parser = yacc.yacc(start="ExpressionInit")
-
-parser.PySMT = ""
-
-with open(f"tests/{sys.argv[1]}.txt") as f:
-    content = f.read()
- 
-
-lexer.input(content)
-parser.parse(lexer=lexer.lexer)
-
-print(parser.PySMT)
