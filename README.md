@@ -30,20 +30,36 @@ Proc     : Atrib
 Var      : ID
 
 
-Cond     : Expr GT Expr
-         | Expr LT Expr
-         | Expr GEQ Expr
-         | Expr LEQ Expr
-         | Expr EQ Expr
-         | Expr NEQ Expr
-         | Expr OR Expr
-         | Expr AND Expr
-         | NOT Cond
 
+Init   : Cond
+       | Atribs
 
-SimpleInit: Expression ENDMARKER
+Cond   : Expre GT Expre
+       | Expre LT Expre
+       | Expre GEQ Expre
+       | Expre LEQ Expre
+       | Expre EQ Expre
+       | Expre NEQ Expre
+       | Cond OR Cond
+       | Cond AND Cond
+       | LParen Cond RParen
+       | NOT Cond
 
-Expression: Atribs
+Atribs : Atrib ';'
+       | Atribs Atrib ';'
+
+Atrib  : ID ATRIB Expre
+
+Expre  : ID
+       | NUM
+       | Expre SUM Expre
+       | Expre SUB Expre
+       | Expre DIV Expre
+       | Expre MUL Expre
+       | Expre MOD Expre
+       | LParen Expre RParen
+
+SimpleInit: Atribs
 
 Atribs    : Atrib ';'
           | Atribs Atrib ';'
@@ -57,4 +73,5 @@ Expr      : ID
           | Expr DIV Expr
           | Expr MUL Expr
           | Expr MOD Expr
+          | LParen Expre RParen
 ```

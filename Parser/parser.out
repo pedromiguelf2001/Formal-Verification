@@ -1,449 +1,1061 @@
 Created by PLY version 3.11 (http://www.dabeaz.com/ply)
 
-Unused terminals:
-
-    AND
-    EQ
-    GEQ
-    GT
-    LEQ
-    LT
-    NEQ
-    NOT
-    OR
-
 Grammar
 
-Rule 0     S' -> ExpressionInit
-Rule 1     ExpressionInit -> Atribs
-Rule 2     Atribs -> Atrib ;
-Rule 3     Atribs -> Atribs Atrib ;
-Rule 4     Atrib -> ID ATRIB Expre
-Rule 5     Expre -> Expre SUM Expre
-Rule 6     Expre -> Expre SUB Expre
-Rule 7     Expre -> Expre MULT Expre
-Rule 8     Expre -> Expre DIV Expre
-Rule 9     Expre -> Expre MOD Expre
-Rule 10    Expre -> LParen Expre RParen
-Rule 11    Expre -> ID
-Rule 12    Expre -> NUM
+Rule 0     S' -> Init
+Rule 1     Init -> Cond
+Rule 2     Init -> Atribs
+Rule 3     Cond -> Expre GT Expre
+Rule 4     Cond -> Expre LT Expre
+Rule 5     Cond -> Expre GEQ Expre
+Rule 6     Cond -> Expre LEQ Expre
+Rule 7     Cond -> Expre EQ Expre
+Rule 8     Cond -> Expre NEQ Expre
+Rule 9     Cond -> Cond OR Cond
+Rule 10    Cond -> Cond AND Cond
+Rule 11    Cond -> NOT Cond
+Rule 12    Cond -> LParen Cond RParen
+Rule 13    Atribs -> Atrib ;
+Rule 14    Atribs -> Atribs Atrib ;
+Rule 15    Atrib -> ID ATRIB Expre
+Rule 16    Expre -> Expre SUM Expre
+Rule 17    Expre -> Expre SUB Expre
+Rule 18    Expre -> Expre MULT Expre
+Rule 19    Expre -> Expre DIV Expre
+Rule 20    Expre -> Expre MOD Expre
+Rule 21    Expre -> LParen Expre RParen
+Rule 22    Expre -> ID
+Rule 23    Expre -> NUM
 
 Terminals, with rules where they appear
 
-;                    : 2 3
-AND                  : 
-ATRIB                : 4
-DIV                  : 8
-EQ                   : 
-GEQ                  : 
-GT                   : 
-ID                   : 4 11
-LEQ                  : 
-LParen               : 10
-LT                   : 
-MOD                  : 9
-MULT                 : 7
-NEQ                  : 
-NOT                  : 
-NUM                  : 12
-OR                   : 
-RParen               : 10
-SUB                  : 6
-SUM                  : 5
+;                    : 13 14
+AND                  : 10
+ATRIB                : 15
+DIV                  : 19
+EQ                   : 7
+GEQ                  : 5
+GT                   : 3
+ID                   : 15 22
+LEQ                  : 6
+LParen               : 12 21
+LT                   : 4
+MOD                  : 20
+MULT                 : 18
+NEQ                  : 8
+NOT                  : 11
+NUM                  : 23
+OR                   : 9
+RParen               : 12 21
+SUB                  : 17
+SUM                  : 16
 error                : 
 
 Nonterminals, with rules where they appear
 
-Atrib                : 2 3
-Atribs               : 1 3
-Expre                : 4 5 5 6 6 7 7 8 8 9 9 10
-ExpressionInit       : 0
+Atrib                : 13 14
+Atribs               : 2 14
+Cond                 : 1 9 9 10 10 11 12
+Expre                : 3 3 4 4 5 5 6 6 7 7 8 8 15 16 16 17 17 18 18 19 19 20 20 21
+Init                 : 0
 
 Parsing method: LALR
 
 state 0
 
-    (0) S' -> . ExpressionInit
-    (1) ExpressionInit -> . Atribs
-    (2) Atribs -> . Atrib ;
-    (3) Atribs -> . Atribs Atrib ;
-    (4) Atrib -> . ID ATRIB Expre
+    (0) S' -> . Init
+    (1) Init -> . Cond
+    (2) Init -> . Atribs
+    (3) Cond -> . Expre GT Expre
+    (4) Cond -> . Expre LT Expre
+    (5) Cond -> . Expre GEQ Expre
+    (6) Cond -> . Expre LEQ Expre
+    (7) Cond -> . Expre EQ Expre
+    (8) Cond -> . Expre NEQ Expre
+    (9) Cond -> . Cond OR Cond
+    (10) Cond -> . Cond AND Cond
+    (11) Cond -> . NOT Cond
+    (12) Cond -> . LParen Cond RParen
+    (13) Atribs -> . Atrib ;
+    (14) Atribs -> . Atribs Atrib ;
+    (16) Expre -> . Expre SUM Expre
+    (17) Expre -> . Expre SUB Expre
+    (18) Expre -> . Expre MULT Expre
+    (19) Expre -> . Expre DIV Expre
+    (20) Expre -> . Expre MOD Expre
+    (21) Expre -> . LParen Expre RParen
+    (22) Expre -> . ID
+    (23) Expre -> . NUM
+    (15) Atrib -> . ID ATRIB Expre
 
-    ID              shift and go to state 4
+    NOT             shift and go to state 5
+    LParen          shift and go to state 6
+    ID              shift and go to state 8
+    NUM             shift and go to state 9
 
-    ExpressionInit                 shift and go to state 1
-    Atribs                         shift and go to state 2
-    Atrib                          shift and go to state 3
+    Init                           shift and go to state 1
+    Cond                           shift and go to state 2
+    Atribs                         shift and go to state 3
+    Expre                          shift and go to state 4
+    Atrib                          shift and go to state 7
 
 state 1
 
-    (0) S' -> ExpressionInit .
+    (0) S' -> Init .
 
 
 
 state 2
 
-    (1) ExpressionInit -> Atribs .
-    (3) Atribs -> Atribs . Atrib ;
-    (4) Atrib -> . ID ATRIB Expre
+    (1) Init -> Cond .
+    (9) Cond -> Cond . OR Cond
+    (10) Cond -> Cond . AND Cond
 
-    $end            reduce using rule 1 (ExpressionInit -> Atribs .)
-    ID              shift and go to state 4
+    $end            reduce using rule 1 (Init -> Cond .)
+    OR              shift and go to state 10
+    AND             shift and go to state 11
 
-    Atrib                          shift and go to state 5
 
 state 3
 
-    (2) Atribs -> Atrib . ;
+    (2) Init -> Atribs .
+    (14) Atribs -> Atribs . Atrib ;
+    (15) Atrib -> . ID ATRIB Expre
 
-    ;               shift and go to state 6
+    $end            reduce using rule 2 (Init -> Atribs .)
+    ID              shift and go to state 13
 
+    Atrib                          shift and go to state 12
 
 state 4
 
-    (4) Atrib -> ID . ATRIB Expre
+    (3) Cond -> Expre . GT Expre
+    (4) Cond -> Expre . LT Expre
+    (5) Cond -> Expre . GEQ Expre
+    (6) Cond -> Expre . LEQ Expre
+    (7) Cond -> Expre . EQ Expre
+    (8) Cond -> Expre . NEQ Expre
+    (16) Expre -> Expre . SUM Expre
+    (17) Expre -> Expre . SUB Expre
+    (18) Expre -> Expre . MULT Expre
+    (19) Expre -> Expre . DIV Expre
+    (20) Expre -> Expre . MOD Expre
 
-    ATRIB           shift and go to state 7
+    GT              shift and go to state 14
+    LT              shift and go to state 15
+    GEQ             shift and go to state 16
+    LEQ             shift and go to state 17
+    EQ              shift and go to state 18
+    NEQ             shift and go to state 19
+    SUM             shift and go to state 20
+    SUB             shift and go to state 21
+    MULT            shift and go to state 22
+    DIV             shift and go to state 23
+    MOD             shift and go to state 24
 
 
 state 5
 
-    (3) Atribs -> Atribs Atrib . ;
+    (11) Cond -> NOT . Cond
+    (3) Cond -> . Expre GT Expre
+    (4) Cond -> . Expre LT Expre
+    (5) Cond -> . Expre GEQ Expre
+    (6) Cond -> . Expre LEQ Expre
+    (7) Cond -> . Expre EQ Expre
+    (8) Cond -> . Expre NEQ Expre
+    (9) Cond -> . Cond OR Cond
+    (10) Cond -> . Cond AND Cond
+    (11) Cond -> . NOT Cond
+    (12) Cond -> . LParen Cond RParen
+    (16) Expre -> . Expre SUM Expre
+    (17) Expre -> . Expre SUB Expre
+    (18) Expre -> . Expre MULT Expre
+    (19) Expre -> . Expre DIV Expre
+    (20) Expre -> . Expre MOD Expre
+    (21) Expre -> . LParen Expre RParen
+    (22) Expre -> . ID
+    (23) Expre -> . NUM
 
-    ;               shift and go to state 8
+    NOT             shift and go to state 5
+    LParen          shift and go to state 6
+    ID              shift and go to state 26
+    NUM             shift and go to state 9
 
+    Cond                           shift and go to state 25
+    Expre                          shift and go to state 4
 
 state 6
 
-    (2) Atribs -> Atrib ; .
+    (12) Cond -> LParen . Cond RParen
+    (21) Expre -> LParen . Expre RParen
+    (3) Cond -> . Expre GT Expre
+    (4) Cond -> . Expre LT Expre
+    (5) Cond -> . Expre GEQ Expre
+    (6) Cond -> . Expre LEQ Expre
+    (7) Cond -> . Expre EQ Expre
+    (8) Cond -> . Expre NEQ Expre
+    (9) Cond -> . Cond OR Cond
+    (10) Cond -> . Cond AND Cond
+    (11) Cond -> . NOT Cond
+    (12) Cond -> . LParen Cond RParen
+    (16) Expre -> . Expre SUM Expre
+    (17) Expre -> . Expre SUB Expre
+    (18) Expre -> . Expre MULT Expre
+    (19) Expre -> . Expre DIV Expre
+    (20) Expre -> . Expre MOD Expre
+    (21) Expre -> . LParen Expre RParen
+    (22) Expre -> . ID
+    (23) Expre -> . NUM
 
-    ID              reduce using rule 2 (Atribs -> Atrib ; .)
-    $end            reduce using rule 2 (Atribs -> Atrib ; .)
+    NOT             shift and go to state 5
+    LParen          shift and go to state 6
+    ID              shift and go to state 26
+    NUM             shift and go to state 9
 
+    Cond                           shift and go to state 27
+    Expre                          shift and go to state 28
 
 state 7
 
-    (4) Atrib -> ID ATRIB . Expre
-    (5) Expre -> . Expre SUM Expre
-    (6) Expre -> . Expre SUB Expre
-    (7) Expre -> . Expre MULT Expre
-    (8) Expre -> . Expre DIV Expre
-    (9) Expre -> . Expre MOD Expre
-    (10) Expre -> . LParen Expre RParen
-    (11) Expre -> . ID
-    (12) Expre -> . NUM
+    (13) Atribs -> Atrib . ;
 
-    LParen          shift and go to state 11
-    ID              shift and go to state 9
-    NUM             shift and go to state 12
+    ;               shift and go to state 29
 
-    Expre                          shift and go to state 10
 
 state 8
 
-    (3) Atribs -> Atribs Atrib ; .
+    (22) Expre -> ID .
+    (15) Atrib -> ID . ATRIB Expre
 
-    ID              reduce using rule 3 (Atribs -> Atribs Atrib ; .)
-    $end            reduce using rule 3 (Atribs -> Atribs Atrib ; .)
+    GT              reduce using rule 22 (Expre -> ID .)
+    LT              reduce using rule 22 (Expre -> ID .)
+    GEQ             reduce using rule 22 (Expre -> ID .)
+    LEQ             reduce using rule 22 (Expre -> ID .)
+    EQ              reduce using rule 22 (Expre -> ID .)
+    NEQ             reduce using rule 22 (Expre -> ID .)
+    SUM             reduce using rule 22 (Expre -> ID .)
+    SUB             reduce using rule 22 (Expre -> ID .)
+    MULT            reduce using rule 22 (Expre -> ID .)
+    DIV             reduce using rule 22 (Expre -> ID .)
+    MOD             reduce using rule 22 (Expre -> ID .)
+    ATRIB           shift and go to state 30
 
 
 state 9
 
-    (11) Expre -> ID .
+    (23) Expre -> NUM .
 
-    SUM             reduce using rule 11 (Expre -> ID .)
-    SUB             reduce using rule 11 (Expre -> ID .)
-    MULT            reduce using rule 11 (Expre -> ID .)
-    DIV             reduce using rule 11 (Expre -> ID .)
-    MOD             reduce using rule 11 (Expre -> ID .)
-    ;               reduce using rule 11 (Expre -> ID .)
-    RParen          reduce using rule 11 (Expre -> ID .)
+    GT              reduce using rule 23 (Expre -> NUM .)
+    LT              reduce using rule 23 (Expre -> NUM .)
+    GEQ             reduce using rule 23 (Expre -> NUM .)
+    LEQ             reduce using rule 23 (Expre -> NUM .)
+    EQ              reduce using rule 23 (Expre -> NUM .)
+    NEQ             reduce using rule 23 (Expre -> NUM .)
+    SUM             reduce using rule 23 (Expre -> NUM .)
+    SUB             reduce using rule 23 (Expre -> NUM .)
+    MULT            reduce using rule 23 (Expre -> NUM .)
+    DIV             reduce using rule 23 (Expre -> NUM .)
+    MOD             reduce using rule 23 (Expre -> NUM .)
+    RParen          reduce using rule 23 (Expre -> NUM .)
+    OR              reduce using rule 23 (Expre -> NUM .)
+    AND             reduce using rule 23 (Expre -> NUM .)
+    $end            reduce using rule 23 (Expre -> NUM .)
+    ;               reduce using rule 23 (Expre -> NUM .)
 
 
 state 10
 
-    (4) Atrib -> ID ATRIB Expre .
-    (5) Expre -> Expre . SUM Expre
-    (6) Expre -> Expre . SUB Expre
-    (7) Expre -> Expre . MULT Expre
-    (8) Expre -> Expre . DIV Expre
-    (9) Expre -> Expre . MOD Expre
+    (9) Cond -> Cond OR . Cond
+    (3) Cond -> . Expre GT Expre
+    (4) Cond -> . Expre LT Expre
+    (5) Cond -> . Expre GEQ Expre
+    (6) Cond -> . Expre LEQ Expre
+    (7) Cond -> . Expre EQ Expre
+    (8) Cond -> . Expre NEQ Expre
+    (9) Cond -> . Cond OR Cond
+    (10) Cond -> . Cond AND Cond
+    (11) Cond -> . NOT Cond
+    (12) Cond -> . LParen Cond RParen
+    (16) Expre -> . Expre SUM Expre
+    (17) Expre -> . Expre SUB Expre
+    (18) Expre -> . Expre MULT Expre
+    (19) Expre -> . Expre DIV Expre
+    (20) Expre -> . Expre MOD Expre
+    (21) Expre -> . LParen Expre RParen
+    (22) Expre -> . ID
+    (23) Expre -> . NUM
 
-    ;               reduce using rule 4 (Atrib -> ID ATRIB Expre .)
-    SUM             shift and go to state 13
-    SUB             shift and go to state 14
-    MULT            shift and go to state 15
-    DIV             shift and go to state 16
-    MOD             shift and go to state 17
+    NOT             shift and go to state 5
+    LParen          shift and go to state 6
+    ID              shift and go to state 26
+    NUM             shift and go to state 9
 
+    Cond                           shift and go to state 31
+    Expre                          shift and go to state 4
 
 state 11
 
-    (10) Expre -> LParen . Expre RParen
-    (5) Expre -> . Expre SUM Expre
-    (6) Expre -> . Expre SUB Expre
-    (7) Expre -> . Expre MULT Expre
-    (8) Expre -> . Expre DIV Expre
-    (9) Expre -> . Expre MOD Expre
-    (10) Expre -> . LParen Expre RParen
-    (11) Expre -> . ID
-    (12) Expre -> . NUM
+    (10) Cond -> Cond AND . Cond
+    (3) Cond -> . Expre GT Expre
+    (4) Cond -> . Expre LT Expre
+    (5) Cond -> . Expre GEQ Expre
+    (6) Cond -> . Expre LEQ Expre
+    (7) Cond -> . Expre EQ Expre
+    (8) Cond -> . Expre NEQ Expre
+    (9) Cond -> . Cond OR Cond
+    (10) Cond -> . Cond AND Cond
+    (11) Cond -> . NOT Cond
+    (12) Cond -> . LParen Cond RParen
+    (16) Expre -> . Expre SUM Expre
+    (17) Expre -> . Expre SUB Expre
+    (18) Expre -> . Expre MULT Expre
+    (19) Expre -> . Expre DIV Expre
+    (20) Expre -> . Expre MOD Expre
+    (21) Expre -> . LParen Expre RParen
+    (22) Expre -> . ID
+    (23) Expre -> . NUM
 
-    LParen          shift and go to state 11
-    ID              shift and go to state 9
-    NUM             shift and go to state 12
+    NOT             shift and go to state 5
+    LParen          shift and go to state 6
+    ID              shift and go to state 26
+    NUM             shift and go to state 9
 
-    Expre                          shift and go to state 18
+    Cond                           shift and go to state 32
+    Expre                          shift and go to state 4
 
 state 12
 
-    (12) Expre -> NUM .
+    (14) Atribs -> Atribs Atrib . ;
 
-    SUM             reduce using rule 12 (Expre -> NUM .)
-    SUB             reduce using rule 12 (Expre -> NUM .)
-    MULT            reduce using rule 12 (Expre -> NUM .)
-    DIV             reduce using rule 12 (Expre -> NUM .)
-    MOD             reduce using rule 12 (Expre -> NUM .)
-    ;               reduce using rule 12 (Expre -> NUM .)
-    RParen          reduce using rule 12 (Expre -> NUM .)
+    ;               shift and go to state 33
 
 
 state 13
 
-    (5) Expre -> Expre SUM . Expre
-    (5) Expre -> . Expre SUM Expre
-    (6) Expre -> . Expre SUB Expre
-    (7) Expre -> . Expre MULT Expre
-    (8) Expre -> . Expre DIV Expre
-    (9) Expre -> . Expre MOD Expre
-    (10) Expre -> . LParen Expre RParen
-    (11) Expre -> . ID
-    (12) Expre -> . NUM
+    (15) Atrib -> ID . ATRIB Expre
 
-    LParen          shift and go to state 11
-    ID              shift and go to state 9
-    NUM             shift and go to state 12
+    ATRIB           shift and go to state 30
 
-    Expre                          shift and go to state 19
 
 state 14
 
-    (6) Expre -> Expre SUB . Expre
-    (5) Expre -> . Expre SUM Expre
-    (6) Expre -> . Expre SUB Expre
-    (7) Expre -> . Expre MULT Expre
-    (8) Expre -> . Expre DIV Expre
-    (9) Expre -> . Expre MOD Expre
-    (10) Expre -> . LParen Expre RParen
-    (11) Expre -> . ID
-    (12) Expre -> . NUM
+    (3) Cond -> Expre GT . Expre
+    (16) Expre -> . Expre SUM Expre
+    (17) Expre -> . Expre SUB Expre
+    (18) Expre -> . Expre MULT Expre
+    (19) Expre -> . Expre DIV Expre
+    (20) Expre -> . Expre MOD Expre
+    (21) Expre -> . LParen Expre RParen
+    (22) Expre -> . ID
+    (23) Expre -> . NUM
 
-    LParen          shift and go to state 11
-    ID              shift and go to state 9
-    NUM             shift and go to state 12
+    LParen          shift and go to state 35
+    ID              shift and go to state 26
+    NUM             shift and go to state 9
 
-    Expre                          shift and go to state 20
+    Expre                          shift and go to state 34
 
 state 15
 
-    (7) Expre -> Expre MULT . Expre
-    (5) Expre -> . Expre SUM Expre
-    (6) Expre -> . Expre SUB Expre
-    (7) Expre -> . Expre MULT Expre
-    (8) Expre -> . Expre DIV Expre
-    (9) Expre -> . Expre MOD Expre
-    (10) Expre -> . LParen Expre RParen
-    (11) Expre -> . ID
-    (12) Expre -> . NUM
+    (4) Cond -> Expre LT . Expre
+    (16) Expre -> . Expre SUM Expre
+    (17) Expre -> . Expre SUB Expre
+    (18) Expre -> . Expre MULT Expre
+    (19) Expre -> . Expre DIV Expre
+    (20) Expre -> . Expre MOD Expre
+    (21) Expre -> . LParen Expre RParen
+    (22) Expre -> . ID
+    (23) Expre -> . NUM
 
-    LParen          shift and go to state 11
-    ID              shift and go to state 9
-    NUM             shift and go to state 12
+    LParen          shift and go to state 35
+    ID              shift and go to state 26
+    NUM             shift and go to state 9
 
-    Expre                          shift and go to state 21
+    Expre                          shift and go to state 36
 
 state 16
 
-    (8) Expre -> Expre DIV . Expre
-    (5) Expre -> . Expre SUM Expre
-    (6) Expre -> . Expre SUB Expre
-    (7) Expre -> . Expre MULT Expre
-    (8) Expre -> . Expre DIV Expre
-    (9) Expre -> . Expre MOD Expre
-    (10) Expre -> . LParen Expre RParen
-    (11) Expre -> . ID
-    (12) Expre -> . NUM
+    (5) Cond -> Expre GEQ . Expre
+    (16) Expre -> . Expre SUM Expre
+    (17) Expre -> . Expre SUB Expre
+    (18) Expre -> . Expre MULT Expre
+    (19) Expre -> . Expre DIV Expre
+    (20) Expre -> . Expre MOD Expre
+    (21) Expre -> . LParen Expre RParen
+    (22) Expre -> . ID
+    (23) Expre -> . NUM
 
-    LParen          shift and go to state 11
-    ID              shift and go to state 9
-    NUM             shift and go to state 12
+    LParen          shift and go to state 35
+    ID              shift and go to state 26
+    NUM             shift and go to state 9
 
-    Expre                          shift and go to state 22
+    Expre                          shift and go to state 37
 
 state 17
 
-    (9) Expre -> Expre MOD . Expre
-    (5) Expre -> . Expre SUM Expre
-    (6) Expre -> . Expre SUB Expre
-    (7) Expre -> . Expre MULT Expre
-    (8) Expre -> . Expre DIV Expre
-    (9) Expre -> . Expre MOD Expre
-    (10) Expre -> . LParen Expre RParen
-    (11) Expre -> . ID
-    (12) Expre -> . NUM
+    (6) Cond -> Expre LEQ . Expre
+    (16) Expre -> . Expre SUM Expre
+    (17) Expre -> . Expre SUB Expre
+    (18) Expre -> . Expre MULT Expre
+    (19) Expre -> . Expre DIV Expre
+    (20) Expre -> . Expre MOD Expre
+    (21) Expre -> . LParen Expre RParen
+    (22) Expre -> . ID
+    (23) Expre -> . NUM
 
-    LParen          shift and go to state 11
-    ID              shift and go to state 9
-    NUM             shift and go to state 12
+    LParen          shift and go to state 35
+    ID              shift and go to state 26
+    NUM             shift and go to state 9
 
-    Expre                          shift and go to state 23
+    Expre                          shift and go to state 38
 
 state 18
 
-    (10) Expre -> LParen Expre . RParen
-    (5) Expre -> Expre . SUM Expre
-    (6) Expre -> Expre . SUB Expre
-    (7) Expre -> Expre . MULT Expre
-    (8) Expre -> Expre . DIV Expre
-    (9) Expre -> Expre . MOD Expre
+    (7) Cond -> Expre EQ . Expre
+    (16) Expre -> . Expre SUM Expre
+    (17) Expre -> . Expre SUB Expre
+    (18) Expre -> . Expre MULT Expre
+    (19) Expre -> . Expre DIV Expre
+    (20) Expre -> . Expre MOD Expre
+    (21) Expre -> . LParen Expre RParen
+    (22) Expre -> . ID
+    (23) Expre -> . NUM
 
-    RParen          shift and go to state 24
-    SUM             shift and go to state 13
-    SUB             shift and go to state 14
-    MULT            shift and go to state 15
-    DIV             shift and go to state 16
-    MOD             shift and go to state 17
+    LParen          shift and go to state 35
+    ID              shift and go to state 26
+    NUM             shift and go to state 9
 
+    Expre                          shift and go to state 39
 
 state 19
 
-    (5) Expre -> Expre SUM Expre .
-    (5) Expre -> Expre . SUM Expre
-    (6) Expre -> Expre . SUB Expre
-    (7) Expre -> Expre . MULT Expre
-    (8) Expre -> Expre . DIV Expre
-    (9) Expre -> Expre . MOD Expre
+    (8) Cond -> Expre NEQ . Expre
+    (16) Expre -> . Expre SUM Expre
+    (17) Expre -> . Expre SUB Expre
+    (18) Expre -> . Expre MULT Expre
+    (19) Expre -> . Expre DIV Expre
+    (20) Expre -> . Expre MOD Expre
+    (21) Expre -> . LParen Expre RParen
+    (22) Expre -> . ID
+    (23) Expre -> . NUM
 
-    SUM             reduce using rule 5 (Expre -> Expre SUM Expre .)
-    SUB             reduce using rule 5 (Expre -> Expre SUM Expre .)
-    ;               reduce using rule 5 (Expre -> Expre SUM Expre .)
-    RParen          reduce using rule 5 (Expre -> Expre SUM Expre .)
-    MULT            shift and go to state 15
-    DIV             shift and go to state 16
-    MOD             shift and go to state 17
+    LParen          shift and go to state 35
+    ID              shift and go to state 26
+    NUM             shift and go to state 9
 
-  ! MULT            [ reduce using rule 5 (Expre -> Expre SUM Expre .) ]
-  ! DIV             [ reduce using rule 5 (Expre -> Expre SUM Expre .) ]
-  ! MOD             [ reduce using rule 5 (Expre -> Expre SUM Expre .) ]
-  ! SUM             [ shift and go to state 13 ]
-  ! SUB             [ shift and go to state 14 ]
-
+    Expre                          shift and go to state 40
 
 state 20
 
-    (6) Expre -> Expre SUB Expre .
-    (5) Expre -> Expre . SUM Expre
-    (6) Expre -> Expre . SUB Expre
-    (7) Expre -> Expre . MULT Expre
-    (8) Expre -> Expre . DIV Expre
-    (9) Expre -> Expre . MOD Expre
+    (16) Expre -> Expre SUM . Expre
+    (16) Expre -> . Expre SUM Expre
+    (17) Expre -> . Expre SUB Expre
+    (18) Expre -> . Expre MULT Expre
+    (19) Expre -> . Expre DIV Expre
+    (20) Expre -> . Expre MOD Expre
+    (21) Expre -> . LParen Expre RParen
+    (22) Expre -> . ID
+    (23) Expre -> . NUM
 
-    SUM             reduce using rule 6 (Expre -> Expre SUB Expre .)
-    SUB             reduce using rule 6 (Expre -> Expre SUB Expre .)
-    ;               reduce using rule 6 (Expre -> Expre SUB Expre .)
-    RParen          reduce using rule 6 (Expre -> Expre SUB Expre .)
-    MULT            shift and go to state 15
-    DIV             shift and go to state 16
-    MOD             shift and go to state 17
+    LParen          shift and go to state 35
+    ID              shift and go to state 26
+    NUM             shift and go to state 9
 
-  ! MULT            [ reduce using rule 6 (Expre -> Expre SUB Expre .) ]
-  ! DIV             [ reduce using rule 6 (Expre -> Expre SUB Expre .) ]
-  ! MOD             [ reduce using rule 6 (Expre -> Expre SUB Expre .) ]
-  ! SUM             [ shift and go to state 13 ]
-  ! SUB             [ shift and go to state 14 ]
-
+    Expre                          shift and go to state 41
 
 state 21
 
-    (7) Expre -> Expre MULT Expre .
-    (5) Expre -> Expre . SUM Expre
-    (6) Expre -> Expre . SUB Expre
-    (7) Expre -> Expre . MULT Expre
-    (8) Expre -> Expre . DIV Expre
-    (9) Expre -> Expre . MOD Expre
+    (17) Expre -> Expre SUB . Expre
+    (16) Expre -> . Expre SUM Expre
+    (17) Expre -> . Expre SUB Expre
+    (18) Expre -> . Expre MULT Expre
+    (19) Expre -> . Expre DIV Expre
+    (20) Expre -> . Expre MOD Expre
+    (21) Expre -> . LParen Expre RParen
+    (22) Expre -> . ID
+    (23) Expre -> . NUM
 
-    SUM             reduce using rule 7 (Expre -> Expre MULT Expre .)
-    SUB             reduce using rule 7 (Expre -> Expre MULT Expre .)
-    MULT            reduce using rule 7 (Expre -> Expre MULT Expre .)
-    DIV             reduce using rule 7 (Expre -> Expre MULT Expre .)
-    MOD             reduce using rule 7 (Expre -> Expre MULT Expre .)
-    ;               reduce using rule 7 (Expre -> Expre MULT Expre .)
-    RParen          reduce using rule 7 (Expre -> Expre MULT Expre .)
+    LParen          shift and go to state 35
+    ID              shift and go to state 26
+    NUM             shift and go to state 9
 
-  ! SUM             [ shift and go to state 13 ]
-  ! SUB             [ shift and go to state 14 ]
-  ! MULT            [ shift and go to state 15 ]
-  ! DIV             [ shift and go to state 16 ]
-  ! MOD             [ shift and go to state 17 ]
-
+    Expre                          shift and go to state 42
 
 state 22
 
-    (8) Expre -> Expre DIV Expre .
-    (5) Expre -> Expre . SUM Expre
-    (6) Expre -> Expre . SUB Expre
-    (7) Expre -> Expre . MULT Expre
-    (8) Expre -> Expre . DIV Expre
-    (9) Expre -> Expre . MOD Expre
+    (18) Expre -> Expre MULT . Expre
+    (16) Expre -> . Expre SUM Expre
+    (17) Expre -> . Expre SUB Expre
+    (18) Expre -> . Expre MULT Expre
+    (19) Expre -> . Expre DIV Expre
+    (20) Expre -> . Expre MOD Expre
+    (21) Expre -> . LParen Expre RParen
+    (22) Expre -> . ID
+    (23) Expre -> . NUM
 
-    SUM             reduce using rule 8 (Expre -> Expre DIV Expre .)
-    SUB             reduce using rule 8 (Expre -> Expre DIV Expre .)
-    MULT            reduce using rule 8 (Expre -> Expre DIV Expre .)
-    DIV             reduce using rule 8 (Expre -> Expre DIV Expre .)
-    MOD             reduce using rule 8 (Expre -> Expre DIV Expre .)
-    ;               reduce using rule 8 (Expre -> Expre DIV Expre .)
-    RParen          reduce using rule 8 (Expre -> Expre DIV Expre .)
+    LParen          shift and go to state 35
+    ID              shift and go to state 26
+    NUM             shift and go to state 9
 
-  ! SUM             [ shift and go to state 13 ]
-  ! SUB             [ shift and go to state 14 ]
-  ! MULT            [ shift and go to state 15 ]
-  ! DIV             [ shift and go to state 16 ]
-  ! MOD             [ shift and go to state 17 ]
-
+    Expre                          shift and go to state 43
 
 state 23
 
-    (9) Expre -> Expre MOD Expre .
-    (5) Expre -> Expre . SUM Expre
-    (6) Expre -> Expre . SUB Expre
-    (7) Expre -> Expre . MULT Expre
-    (8) Expre -> Expre . DIV Expre
-    (9) Expre -> Expre . MOD Expre
+    (19) Expre -> Expre DIV . Expre
+    (16) Expre -> . Expre SUM Expre
+    (17) Expre -> . Expre SUB Expre
+    (18) Expre -> . Expre MULT Expre
+    (19) Expre -> . Expre DIV Expre
+    (20) Expre -> . Expre MOD Expre
+    (21) Expre -> . LParen Expre RParen
+    (22) Expre -> . ID
+    (23) Expre -> . NUM
 
-    SUM             reduce using rule 9 (Expre -> Expre MOD Expre .)
-    SUB             reduce using rule 9 (Expre -> Expre MOD Expre .)
-    MULT            reduce using rule 9 (Expre -> Expre MOD Expre .)
-    DIV             reduce using rule 9 (Expre -> Expre MOD Expre .)
-    MOD             reduce using rule 9 (Expre -> Expre MOD Expre .)
-    ;               reduce using rule 9 (Expre -> Expre MOD Expre .)
-    RParen          reduce using rule 9 (Expre -> Expre MOD Expre .)
+    LParen          shift and go to state 35
+    ID              shift and go to state 26
+    NUM             shift and go to state 9
 
-  ! SUM             [ shift and go to state 13 ]
-  ! SUB             [ shift and go to state 14 ]
-  ! MULT            [ shift and go to state 15 ]
-  ! DIV             [ shift and go to state 16 ]
-  ! MOD             [ shift and go to state 17 ]
-
+    Expre                          shift and go to state 44
 
 state 24
 
-    (10) Expre -> LParen Expre RParen .
+    (20) Expre -> Expre MOD . Expre
+    (16) Expre -> . Expre SUM Expre
+    (17) Expre -> . Expre SUB Expre
+    (18) Expre -> . Expre MULT Expre
+    (19) Expre -> . Expre DIV Expre
+    (20) Expre -> . Expre MOD Expre
+    (21) Expre -> . LParen Expre RParen
+    (22) Expre -> . ID
+    (23) Expre -> . NUM
 
-    SUM             reduce using rule 10 (Expre -> LParen Expre RParen .)
-    SUB             reduce using rule 10 (Expre -> LParen Expre RParen .)
-    MULT            reduce using rule 10 (Expre -> LParen Expre RParen .)
-    DIV             reduce using rule 10 (Expre -> LParen Expre RParen .)
-    MOD             reduce using rule 10 (Expre -> LParen Expre RParen .)
-    ;               reduce using rule 10 (Expre -> LParen Expre RParen .)
-    RParen          reduce using rule 10 (Expre -> LParen Expre RParen .)
+    LParen          shift and go to state 35
+    ID              shift and go to state 26
+    NUM             shift and go to state 9
 
+    Expre                          shift and go to state 45
+
+state 25
+
+    (11) Cond -> NOT Cond .
+    (9) Cond -> Cond . OR Cond
+    (10) Cond -> Cond . AND Cond
+
+  ! shift/reduce conflict for OR resolved as shift
+  ! shift/reduce conflict for AND resolved as shift
+    $end            reduce using rule 11 (Cond -> NOT Cond .)
+    RParen          reduce using rule 11 (Cond -> NOT Cond .)
+    OR              shift and go to state 10
+    AND             shift and go to state 11
+
+  ! OR              [ reduce using rule 11 (Cond -> NOT Cond .) ]
+  ! AND             [ reduce using rule 11 (Cond -> NOT Cond .) ]
+
+
+state 26
+
+    (22) Expre -> ID .
+
+    GT              reduce using rule 22 (Expre -> ID .)
+    LT              reduce using rule 22 (Expre -> ID .)
+    GEQ             reduce using rule 22 (Expre -> ID .)
+    LEQ             reduce using rule 22 (Expre -> ID .)
+    EQ              reduce using rule 22 (Expre -> ID .)
+    NEQ             reduce using rule 22 (Expre -> ID .)
+    SUM             reduce using rule 22 (Expre -> ID .)
+    SUB             reduce using rule 22 (Expre -> ID .)
+    MULT            reduce using rule 22 (Expre -> ID .)
+    DIV             reduce using rule 22 (Expre -> ID .)
+    MOD             reduce using rule 22 (Expre -> ID .)
+    RParen          reduce using rule 22 (Expre -> ID .)
+    OR              reduce using rule 22 (Expre -> ID .)
+    AND             reduce using rule 22 (Expre -> ID .)
+    $end            reduce using rule 22 (Expre -> ID .)
+    ;               reduce using rule 22 (Expre -> ID .)
+
+
+state 27
+
+    (12) Cond -> LParen Cond . RParen
+    (9) Cond -> Cond . OR Cond
+    (10) Cond -> Cond . AND Cond
+
+    RParen          shift and go to state 46
+    OR              shift and go to state 10
+    AND             shift and go to state 11
+
+
+state 28
+
+    (21) Expre -> LParen Expre . RParen
+    (3) Cond -> Expre . GT Expre
+    (4) Cond -> Expre . LT Expre
+    (5) Cond -> Expre . GEQ Expre
+    (6) Cond -> Expre . LEQ Expre
+    (7) Cond -> Expre . EQ Expre
+    (8) Cond -> Expre . NEQ Expre
+    (16) Expre -> Expre . SUM Expre
+    (17) Expre -> Expre . SUB Expre
+    (18) Expre -> Expre . MULT Expre
+    (19) Expre -> Expre . DIV Expre
+    (20) Expre -> Expre . MOD Expre
+
+    RParen          shift and go to state 47
+    GT              shift and go to state 14
+    LT              shift and go to state 15
+    GEQ             shift and go to state 16
+    LEQ             shift and go to state 17
+    EQ              shift and go to state 18
+    NEQ             shift and go to state 19
+    SUM             shift and go to state 20
+    SUB             shift and go to state 21
+    MULT            shift and go to state 22
+    DIV             shift and go to state 23
+    MOD             shift and go to state 24
+
+
+state 29
+
+    (13) Atribs -> Atrib ; .
+
+    ID              reduce using rule 13 (Atribs -> Atrib ; .)
+    $end            reduce using rule 13 (Atribs -> Atrib ; .)
+
+
+state 30
+
+    (15) Atrib -> ID ATRIB . Expre
+    (16) Expre -> . Expre SUM Expre
+    (17) Expre -> . Expre SUB Expre
+    (18) Expre -> . Expre MULT Expre
+    (19) Expre -> . Expre DIV Expre
+    (20) Expre -> . Expre MOD Expre
+    (21) Expre -> . LParen Expre RParen
+    (22) Expre -> . ID
+    (23) Expre -> . NUM
+
+    LParen          shift and go to state 35
+    ID              shift and go to state 26
+    NUM             shift and go to state 9
+
+    Expre                          shift and go to state 48
+
+state 31
+
+    (9) Cond -> Cond OR Cond .
+    (9) Cond -> Cond . OR Cond
+    (10) Cond -> Cond . AND Cond
+
+  ! shift/reduce conflict for OR resolved as shift
+  ! shift/reduce conflict for AND resolved as shift
+    $end            reduce using rule 9 (Cond -> Cond OR Cond .)
+    RParen          reduce using rule 9 (Cond -> Cond OR Cond .)
+    OR              shift and go to state 10
+    AND             shift and go to state 11
+
+  ! OR              [ reduce using rule 9 (Cond -> Cond OR Cond .) ]
+  ! AND             [ reduce using rule 9 (Cond -> Cond OR Cond .) ]
+
+
+state 32
+
+    (10) Cond -> Cond AND Cond .
+    (9) Cond -> Cond . OR Cond
+    (10) Cond -> Cond . AND Cond
+
+  ! shift/reduce conflict for OR resolved as shift
+  ! shift/reduce conflict for AND resolved as shift
+    $end            reduce using rule 10 (Cond -> Cond AND Cond .)
+    RParen          reduce using rule 10 (Cond -> Cond AND Cond .)
+    OR              shift and go to state 10
+    AND             shift and go to state 11
+
+  ! OR              [ reduce using rule 10 (Cond -> Cond AND Cond .) ]
+  ! AND             [ reduce using rule 10 (Cond -> Cond AND Cond .) ]
+
+
+state 33
+
+    (14) Atribs -> Atribs Atrib ; .
+
+    ID              reduce using rule 14 (Atribs -> Atribs Atrib ; .)
+    $end            reduce using rule 14 (Atribs -> Atribs Atrib ; .)
+
+
+state 34
+
+    (3) Cond -> Expre GT Expre .
+    (16) Expre -> Expre . SUM Expre
+    (17) Expre -> Expre . SUB Expre
+    (18) Expre -> Expre . MULT Expre
+    (19) Expre -> Expre . DIV Expre
+    (20) Expre -> Expre . MOD Expre
+
+    OR              reduce using rule 3 (Cond -> Expre GT Expre .)
+    AND             reduce using rule 3 (Cond -> Expre GT Expre .)
+    $end            reduce using rule 3 (Cond -> Expre GT Expre .)
+    RParen          reduce using rule 3 (Cond -> Expre GT Expre .)
+    SUM             shift and go to state 20
+    SUB             shift and go to state 21
+    MULT            shift and go to state 22
+    DIV             shift and go to state 23
+    MOD             shift and go to state 24
+
+
+state 35
+
+    (21) Expre -> LParen . Expre RParen
+    (16) Expre -> . Expre SUM Expre
+    (17) Expre -> . Expre SUB Expre
+    (18) Expre -> . Expre MULT Expre
+    (19) Expre -> . Expre DIV Expre
+    (20) Expre -> . Expre MOD Expre
+    (21) Expre -> . LParen Expre RParen
+    (22) Expre -> . ID
+    (23) Expre -> . NUM
+
+    LParen          shift and go to state 35
+    ID              shift and go to state 26
+    NUM             shift and go to state 9
+
+    Expre                          shift and go to state 49
+
+state 36
+
+    (4) Cond -> Expre LT Expre .
+    (16) Expre -> Expre . SUM Expre
+    (17) Expre -> Expre . SUB Expre
+    (18) Expre -> Expre . MULT Expre
+    (19) Expre -> Expre . DIV Expre
+    (20) Expre -> Expre . MOD Expre
+
+    OR              reduce using rule 4 (Cond -> Expre LT Expre .)
+    AND             reduce using rule 4 (Cond -> Expre LT Expre .)
+    $end            reduce using rule 4 (Cond -> Expre LT Expre .)
+    RParen          reduce using rule 4 (Cond -> Expre LT Expre .)
+    SUM             shift and go to state 20
+    SUB             shift and go to state 21
+    MULT            shift and go to state 22
+    DIV             shift and go to state 23
+    MOD             shift and go to state 24
+
+
+state 37
+
+    (5) Cond -> Expre GEQ Expre .
+    (16) Expre -> Expre . SUM Expre
+    (17) Expre -> Expre . SUB Expre
+    (18) Expre -> Expre . MULT Expre
+    (19) Expre -> Expre . DIV Expre
+    (20) Expre -> Expre . MOD Expre
+
+    OR              reduce using rule 5 (Cond -> Expre GEQ Expre .)
+    AND             reduce using rule 5 (Cond -> Expre GEQ Expre .)
+    $end            reduce using rule 5 (Cond -> Expre GEQ Expre .)
+    RParen          reduce using rule 5 (Cond -> Expre GEQ Expre .)
+    SUM             shift and go to state 20
+    SUB             shift and go to state 21
+    MULT            shift and go to state 22
+    DIV             shift and go to state 23
+    MOD             shift and go to state 24
+
+
+state 38
+
+    (6) Cond -> Expre LEQ Expre .
+    (16) Expre -> Expre . SUM Expre
+    (17) Expre -> Expre . SUB Expre
+    (18) Expre -> Expre . MULT Expre
+    (19) Expre -> Expre . DIV Expre
+    (20) Expre -> Expre . MOD Expre
+
+    OR              reduce using rule 6 (Cond -> Expre LEQ Expre .)
+    AND             reduce using rule 6 (Cond -> Expre LEQ Expre .)
+    $end            reduce using rule 6 (Cond -> Expre LEQ Expre .)
+    RParen          reduce using rule 6 (Cond -> Expre LEQ Expre .)
+    SUM             shift and go to state 20
+    SUB             shift and go to state 21
+    MULT            shift and go to state 22
+    DIV             shift and go to state 23
+    MOD             shift and go to state 24
+
+
+state 39
+
+    (7) Cond -> Expre EQ Expre .
+    (16) Expre -> Expre . SUM Expre
+    (17) Expre -> Expre . SUB Expre
+    (18) Expre -> Expre . MULT Expre
+    (19) Expre -> Expre . DIV Expre
+    (20) Expre -> Expre . MOD Expre
+
+    OR              reduce using rule 7 (Cond -> Expre EQ Expre .)
+    AND             reduce using rule 7 (Cond -> Expre EQ Expre .)
+    $end            reduce using rule 7 (Cond -> Expre EQ Expre .)
+    RParen          reduce using rule 7 (Cond -> Expre EQ Expre .)
+    SUM             shift and go to state 20
+    SUB             shift and go to state 21
+    MULT            shift and go to state 22
+    DIV             shift and go to state 23
+    MOD             shift and go to state 24
+
+
+state 40
+
+    (8) Cond -> Expre NEQ Expre .
+    (16) Expre -> Expre . SUM Expre
+    (17) Expre -> Expre . SUB Expre
+    (18) Expre -> Expre . MULT Expre
+    (19) Expre -> Expre . DIV Expre
+    (20) Expre -> Expre . MOD Expre
+
+    OR              reduce using rule 8 (Cond -> Expre NEQ Expre .)
+    AND             reduce using rule 8 (Cond -> Expre NEQ Expre .)
+    $end            reduce using rule 8 (Cond -> Expre NEQ Expre .)
+    RParen          reduce using rule 8 (Cond -> Expre NEQ Expre .)
+    SUM             shift and go to state 20
+    SUB             shift and go to state 21
+    MULT            shift and go to state 22
+    DIV             shift and go to state 23
+    MOD             shift and go to state 24
+
+
+state 41
+
+    (16) Expre -> Expre SUM Expre .
+    (16) Expre -> Expre . SUM Expre
+    (17) Expre -> Expre . SUB Expre
+    (18) Expre -> Expre . MULT Expre
+    (19) Expre -> Expre . DIV Expre
+    (20) Expre -> Expre . MOD Expre
+
+    GT              reduce using rule 16 (Expre -> Expre SUM Expre .)
+    LT              reduce using rule 16 (Expre -> Expre SUM Expre .)
+    GEQ             reduce using rule 16 (Expre -> Expre SUM Expre .)
+    LEQ             reduce using rule 16 (Expre -> Expre SUM Expre .)
+    EQ              reduce using rule 16 (Expre -> Expre SUM Expre .)
+    NEQ             reduce using rule 16 (Expre -> Expre SUM Expre .)
+    SUM             reduce using rule 16 (Expre -> Expre SUM Expre .)
+    SUB             reduce using rule 16 (Expre -> Expre SUM Expre .)
+    RParen          reduce using rule 16 (Expre -> Expre SUM Expre .)
+    OR              reduce using rule 16 (Expre -> Expre SUM Expre .)
+    AND             reduce using rule 16 (Expre -> Expre SUM Expre .)
+    $end            reduce using rule 16 (Expre -> Expre SUM Expre .)
+    ;               reduce using rule 16 (Expre -> Expre SUM Expre .)
+    MULT            shift and go to state 22
+    DIV             shift and go to state 23
+    MOD             shift and go to state 24
+
+  ! MULT            [ reduce using rule 16 (Expre -> Expre SUM Expre .) ]
+  ! DIV             [ reduce using rule 16 (Expre -> Expre SUM Expre .) ]
+  ! MOD             [ reduce using rule 16 (Expre -> Expre SUM Expre .) ]
+  ! SUM             [ shift and go to state 20 ]
+  ! SUB             [ shift and go to state 21 ]
+
+
+state 42
+
+    (17) Expre -> Expre SUB Expre .
+    (16) Expre -> Expre . SUM Expre
+    (17) Expre -> Expre . SUB Expre
+    (18) Expre -> Expre . MULT Expre
+    (19) Expre -> Expre . DIV Expre
+    (20) Expre -> Expre . MOD Expre
+
+    GT              reduce using rule 17 (Expre -> Expre SUB Expre .)
+    LT              reduce using rule 17 (Expre -> Expre SUB Expre .)
+    GEQ             reduce using rule 17 (Expre -> Expre SUB Expre .)
+    LEQ             reduce using rule 17 (Expre -> Expre SUB Expre .)
+    EQ              reduce using rule 17 (Expre -> Expre SUB Expre .)
+    NEQ             reduce using rule 17 (Expre -> Expre SUB Expre .)
+    SUM             reduce using rule 17 (Expre -> Expre SUB Expre .)
+    SUB             reduce using rule 17 (Expre -> Expre SUB Expre .)
+    RParen          reduce using rule 17 (Expre -> Expre SUB Expre .)
+    OR              reduce using rule 17 (Expre -> Expre SUB Expre .)
+    AND             reduce using rule 17 (Expre -> Expre SUB Expre .)
+    $end            reduce using rule 17 (Expre -> Expre SUB Expre .)
+    ;               reduce using rule 17 (Expre -> Expre SUB Expre .)
+    MULT            shift and go to state 22
+    DIV             shift and go to state 23
+    MOD             shift and go to state 24
+
+  ! MULT            [ reduce using rule 17 (Expre -> Expre SUB Expre .) ]
+  ! DIV             [ reduce using rule 17 (Expre -> Expre SUB Expre .) ]
+  ! MOD             [ reduce using rule 17 (Expre -> Expre SUB Expre .) ]
+  ! SUM             [ shift and go to state 20 ]
+  ! SUB             [ shift and go to state 21 ]
+
+
+state 43
+
+    (18) Expre -> Expre MULT Expre .
+    (16) Expre -> Expre . SUM Expre
+    (17) Expre -> Expre . SUB Expre
+    (18) Expre -> Expre . MULT Expre
+    (19) Expre -> Expre . DIV Expre
+    (20) Expre -> Expre . MOD Expre
+
+    GT              reduce using rule 18 (Expre -> Expre MULT Expre .)
+    LT              reduce using rule 18 (Expre -> Expre MULT Expre .)
+    GEQ             reduce using rule 18 (Expre -> Expre MULT Expre .)
+    LEQ             reduce using rule 18 (Expre -> Expre MULT Expre .)
+    EQ              reduce using rule 18 (Expre -> Expre MULT Expre .)
+    NEQ             reduce using rule 18 (Expre -> Expre MULT Expre .)
+    SUM             reduce using rule 18 (Expre -> Expre MULT Expre .)
+    SUB             reduce using rule 18 (Expre -> Expre MULT Expre .)
+    MULT            reduce using rule 18 (Expre -> Expre MULT Expre .)
+    DIV             reduce using rule 18 (Expre -> Expre MULT Expre .)
+    MOD             reduce using rule 18 (Expre -> Expre MULT Expre .)
+    RParen          reduce using rule 18 (Expre -> Expre MULT Expre .)
+    OR              reduce using rule 18 (Expre -> Expre MULT Expre .)
+    AND             reduce using rule 18 (Expre -> Expre MULT Expre .)
+    $end            reduce using rule 18 (Expre -> Expre MULT Expre .)
+    ;               reduce using rule 18 (Expre -> Expre MULT Expre .)
+
+  ! SUM             [ shift and go to state 20 ]
+  ! SUB             [ shift and go to state 21 ]
+  ! MULT            [ shift and go to state 22 ]
+  ! DIV             [ shift and go to state 23 ]
+  ! MOD             [ shift and go to state 24 ]
+
+
+state 44
+
+    (19) Expre -> Expre DIV Expre .
+    (16) Expre -> Expre . SUM Expre
+    (17) Expre -> Expre . SUB Expre
+    (18) Expre -> Expre . MULT Expre
+    (19) Expre -> Expre . DIV Expre
+    (20) Expre -> Expre . MOD Expre
+
+    GT              reduce using rule 19 (Expre -> Expre DIV Expre .)
+    LT              reduce using rule 19 (Expre -> Expre DIV Expre .)
+    GEQ             reduce using rule 19 (Expre -> Expre DIV Expre .)
+    LEQ             reduce using rule 19 (Expre -> Expre DIV Expre .)
+    EQ              reduce using rule 19 (Expre -> Expre DIV Expre .)
+    NEQ             reduce using rule 19 (Expre -> Expre DIV Expre .)
+    SUM             reduce using rule 19 (Expre -> Expre DIV Expre .)
+    SUB             reduce using rule 19 (Expre -> Expre DIV Expre .)
+    MULT            reduce using rule 19 (Expre -> Expre DIV Expre .)
+    DIV             reduce using rule 19 (Expre -> Expre DIV Expre .)
+    MOD             reduce using rule 19 (Expre -> Expre DIV Expre .)
+    RParen          reduce using rule 19 (Expre -> Expre DIV Expre .)
+    OR              reduce using rule 19 (Expre -> Expre DIV Expre .)
+    AND             reduce using rule 19 (Expre -> Expre DIV Expre .)
+    $end            reduce using rule 19 (Expre -> Expre DIV Expre .)
+    ;               reduce using rule 19 (Expre -> Expre DIV Expre .)
+
+  ! SUM             [ shift and go to state 20 ]
+  ! SUB             [ shift and go to state 21 ]
+  ! MULT            [ shift and go to state 22 ]
+  ! DIV             [ shift and go to state 23 ]
+  ! MOD             [ shift and go to state 24 ]
+
+
+state 45
+
+    (20) Expre -> Expre MOD Expre .
+    (16) Expre -> Expre . SUM Expre
+    (17) Expre -> Expre . SUB Expre
+    (18) Expre -> Expre . MULT Expre
+    (19) Expre -> Expre . DIV Expre
+    (20) Expre -> Expre . MOD Expre
+
+    GT              reduce using rule 20 (Expre -> Expre MOD Expre .)
+    LT              reduce using rule 20 (Expre -> Expre MOD Expre .)
+    GEQ             reduce using rule 20 (Expre -> Expre MOD Expre .)
+    LEQ             reduce using rule 20 (Expre -> Expre MOD Expre .)
+    EQ              reduce using rule 20 (Expre -> Expre MOD Expre .)
+    NEQ             reduce using rule 20 (Expre -> Expre MOD Expre .)
+    SUM             reduce using rule 20 (Expre -> Expre MOD Expre .)
+    SUB             reduce using rule 20 (Expre -> Expre MOD Expre .)
+    MULT            reduce using rule 20 (Expre -> Expre MOD Expre .)
+    DIV             reduce using rule 20 (Expre -> Expre MOD Expre .)
+    MOD             reduce using rule 20 (Expre -> Expre MOD Expre .)
+    RParen          reduce using rule 20 (Expre -> Expre MOD Expre .)
+    OR              reduce using rule 20 (Expre -> Expre MOD Expre .)
+    AND             reduce using rule 20 (Expre -> Expre MOD Expre .)
+    $end            reduce using rule 20 (Expre -> Expre MOD Expre .)
+    ;               reduce using rule 20 (Expre -> Expre MOD Expre .)
+
+  ! SUM             [ shift and go to state 20 ]
+  ! SUB             [ shift and go to state 21 ]
+  ! MULT            [ shift and go to state 22 ]
+  ! DIV             [ shift and go to state 23 ]
+  ! MOD             [ shift and go to state 24 ]
+
+
+state 46
+
+    (12) Cond -> LParen Cond RParen .
+
+    OR              reduce using rule 12 (Cond -> LParen Cond RParen .)
+    AND             reduce using rule 12 (Cond -> LParen Cond RParen .)
+    $end            reduce using rule 12 (Cond -> LParen Cond RParen .)
+    RParen          reduce using rule 12 (Cond -> LParen Cond RParen .)
+
+
+state 47
+
+    (21) Expre -> LParen Expre RParen .
+
+    GT              reduce using rule 21 (Expre -> LParen Expre RParen .)
+    LT              reduce using rule 21 (Expre -> LParen Expre RParen .)
+    GEQ             reduce using rule 21 (Expre -> LParen Expre RParen .)
+    LEQ             reduce using rule 21 (Expre -> LParen Expre RParen .)
+    EQ              reduce using rule 21 (Expre -> LParen Expre RParen .)
+    NEQ             reduce using rule 21 (Expre -> LParen Expre RParen .)
+    SUM             reduce using rule 21 (Expre -> LParen Expre RParen .)
+    SUB             reduce using rule 21 (Expre -> LParen Expre RParen .)
+    MULT            reduce using rule 21 (Expre -> LParen Expre RParen .)
+    DIV             reduce using rule 21 (Expre -> LParen Expre RParen .)
+    MOD             reduce using rule 21 (Expre -> LParen Expre RParen .)
+    RParen          reduce using rule 21 (Expre -> LParen Expre RParen .)
+    OR              reduce using rule 21 (Expre -> LParen Expre RParen .)
+    AND             reduce using rule 21 (Expre -> LParen Expre RParen .)
+    $end            reduce using rule 21 (Expre -> LParen Expre RParen .)
+    ;               reduce using rule 21 (Expre -> LParen Expre RParen .)
+
+
+state 48
+
+    (15) Atrib -> ID ATRIB Expre .
+    (16) Expre -> Expre . SUM Expre
+    (17) Expre -> Expre . SUB Expre
+    (18) Expre -> Expre . MULT Expre
+    (19) Expre -> Expre . DIV Expre
+    (20) Expre -> Expre . MOD Expre
+
+    ;               reduce using rule 15 (Atrib -> ID ATRIB Expre .)
+    SUM             shift and go to state 20
+    SUB             shift and go to state 21
+    MULT            shift and go to state 22
+    DIV             shift and go to state 23
+    MOD             shift and go to state 24
+
+
+state 49
+
+    (21) Expre -> LParen Expre . RParen
+    (16) Expre -> Expre . SUM Expre
+    (17) Expre -> Expre . SUB Expre
+    (18) Expre -> Expre . MULT Expre
+    (19) Expre -> Expre . DIV Expre
+    (20) Expre -> Expre . MOD Expre
+
+    RParen          shift and go to state 47
+    SUM             shift and go to state 20
+    SUB             shift and go to state 21
+    MULT            shift and go to state 22
+    DIV             shift and go to state 23
+    MOD             shift and go to state 24
+
+WARNING: 
+WARNING: Conflicts:
+WARNING: 
+WARNING: shift/reduce conflict for OR in state 25 resolved as shift
+WARNING: shift/reduce conflict for AND in state 25 resolved as shift
+WARNING: shift/reduce conflict for OR in state 31 resolved as shift
+WARNING: shift/reduce conflict for AND in state 31 resolved as shift
+WARNING: shift/reduce conflict for OR in state 32 resolved as shift
+WARNING: shift/reduce conflict for AND in state 32 resolved as shift

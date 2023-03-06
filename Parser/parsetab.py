@@ -6,9 +6,9 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = "ExpressionInitleftSUMSUBleftMULTDIVMODAND ATRIB DIV EQ GEQ GT ID LEQ LParen LT MOD MULT NEQ NOT NUM OR RParen SUB SUMExpressionInit : AtribsAtribs : Atrib ';'\n                | Atribs Atrib ';'Atrib : ID ATRIB ExpreExpre : Expre SUM Expre\n                | Expre SUB Expre\n                | Expre MULT Expre\n                | Expre DIV Expre\n                | Expre MOD ExpreExpre : LParen Expre RParenExpre : IDExpre : NUM"
+_lr_signature = "InitleftSUMSUBleftMULTDIVMODAND ATRIB DIV EQ GEQ GT ID LEQ LParen LT MOD MULT NEQ NOT NUM OR RParen SUB SUMInit : Cond\n                | AtribsCond : Expre GT Expre\n                | Expre LT Expre\n                | Expre GEQ Expre\n                | Expre LEQ Expre\n                | Expre EQ Expre\n                | Expre NEQ Expre\n                | Cond OR Cond\n                | Cond AND CondCond : NOT CondCond : LParen Cond RParenAtribs : Atrib ';'\n                  | Atribs Atrib ';'Atrib : ID ATRIB ExpreExpre : Expre SUM Expre\n                 | Expre SUB Expre\n                 | Expre MULT Expre\n                 | Expre DIV Expre\n                 | Expre MOD ExpreExpre : LParen Expre RParenExpre : IDExpre : NUM"
     
-_lr_action_items = {'ID':([0,2,6,7,8,11,13,14,15,16,17,],[4,4,-2,9,-3,9,9,9,9,9,9,]),'$end':([1,2,6,8,],[0,-1,-2,-3,]),';':([3,5,9,10,12,19,20,21,22,23,24,],[6,8,-11,-4,-12,-5,-6,-7,-8,-9,-10,]),'ATRIB':([4,],[7,]),'LParen':([7,11,13,14,15,16,17,],[11,11,11,11,11,11,11,]),'NUM':([7,11,13,14,15,16,17,],[12,12,12,12,12,12,12,]),'SUM':([9,10,12,18,19,20,21,22,23,24,],[-11,13,-12,13,-5,-6,-7,-8,-9,-10,]),'SUB':([9,10,12,18,19,20,21,22,23,24,],[-11,14,-12,14,-5,-6,-7,-8,-9,-10,]),'MULT':([9,10,12,18,19,20,21,22,23,24,],[-11,15,-12,15,15,15,-7,-8,-9,-10,]),'DIV':([9,10,12,18,19,20,21,22,23,24,],[-11,16,-12,16,16,16,-7,-8,-9,-10,]),'MOD':([9,10,12,18,19,20,21,22,23,24,],[-11,17,-12,17,17,17,-7,-8,-9,-10,]),'RParen':([9,12,18,19,20,21,22,23,24,],[-11,-12,24,-5,-6,-7,-8,-9,-10,]),}
+_lr_action_items = {'NOT':([0,5,6,10,11,],[5,5,5,5,5,]),'LParen':([0,5,6,10,11,14,15,16,17,18,19,20,21,22,23,24,30,35,],[6,6,6,6,6,35,35,35,35,35,35,35,35,35,35,35,35,35,]),'ID':([0,3,5,6,10,11,14,15,16,17,18,19,20,21,22,23,24,29,30,33,35,],[8,13,26,26,26,26,26,26,26,26,26,26,26,26,26,26,26,-13,26,-14,26,]),'NUM':([0,5,6,10,11,14,15,16,17,18,19,20,21,22,23,24,30,35,],[9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,]),'$end':([1,2,3,9,25,26,29,31,32,33,34,36,37,38,39,40,41,42,43,44,45,46,47,],[0,-1,-2,-23,-11,-22,-13,-9,-10,-14,-3,-4,-5,-6,-7,-8,-16,-17,-18,-19,-20,-12,-21,]),'OR':([2,9,25,26,27,31,32,34,36,37,38,39,40,41,42,43,44,45,46,47,],[10,-23,10,-22,10,10,10,-3,-4,-5,-6,-7,-8,-16,-17,-18,-19,-20,-12,-21,]),'AND':([2,9,25,26,27,31,32,34,36,37,38,39,40,41,42,43,44,45,46,47,],[11,-23,11,-22,11,11,11,-3,-4,-5,-6,-7,-8,-16,-17,-18,-19,-20,-12,-21,]),'GT':([4,8,9,26,28,41,42,43,44,45,47,],[14,-22,-23,-22,14,-16,-17,-18,-19,-20,-21,]),'LT':([4,8,9,26,28,41,42,43,44,45,47,],[15,-22,-23,-22,15,-16,-17,-18,-19,-20,-21,]),'GEQ':([4,8,9,26,28,41,42,43,44,45,47,],[16,-22,-23,-22,16,-16,-17,-18,-19,-20,-21,]),'LEQ':([4,8,9,26,28,41,42,43,44,45,47,],[17,-22,-23,-22,17,-16,-17,-18,-19,-20,-21,]),'EQ':([4,8,9,26,28,41,42,43,44,45,47,],[18,-22,-23,-22,18,-16,-17,-18,-19,-20,-21,]),'NEQ':([4,8,9,26,28,41,42,43,44,45,47,],[19,-22,-23,-22,19,-16,-17,-18,-19,-20,-21,]),'SUM':([4,8,9,26,28,34,36,37,38,39,40,41,42,43,44,45,47,48,49,],[20,-22,-23,-22,20,20,20,20,20,20,20,-16,-17,-18,-19,-20,-21,20,20,]),'SUB':([4,8,9,26,28,34,36,37,38,39,40,41,42,43,44,45,47,48,49,],[21,-22,-23,-22,21,21,21,21,21,21,21,-16,-17,-18,-19,-20,-21,21,21,]),'MULT':([4,8,9,26,28,34,36,37,38,39,40,41,42,43,44,45,47,48,49,],[22,-22,-23,-22,22,22,22,22,22,22,22,22,22,-18,-19,-20,-21,22,22,]),'DIV':([4,8,9,26,28,34,36,37,38,39,40,41,42,43,44,45,47,48,49,],[23,-22,-23,-22,23,23,23,23,23,23,23,23,23,-18,-19,-20,-21,23,23,]),'MOD':([4,8,9,26,28,34,36,37,38,39,40,41,42,43,44,45,47,48,49,],[24,-22,-23,-22,24,24,24,24,24,24,24,24,24,-18,-19,-20,-21,24,24,]),';':([7,9,12,26,41,42,43,44,45,47,48,],[29,-23,33,-22,-16,-17,-18,-19,-20,-21,-15,]),'ATRIB':([8,13,],[30,30,]),'RParen':([9,25,26,27,28,31,32,34,36,37,38,39,40,41,42,43,44,45,46,47,49,],[-23,-11,-22,46,47,-9,-10,-3,-4,-5,-6,-7,-8,-16,-17,-18,-19,-20,-12,-21,47,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -17,7 +17,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'ExpressionInit':([0,],[1,]),'Atribs':([0,],[2,]),'Atrib':([0,2,],[3,5,]),'Expre':([7,11,13,14,15,16,17,],[10,18,19,20,21,22,23,]),}
+_lr_goto_items = {'Init':([0,],[1,]),'Cond':([0,5,6,10,11,],[2,25,27,31,32,]),'Atribs':([0,],[3,]),'Expre':([0,5,6,10,11,14,15,16,17,18,19,20,21,22,23,24,30,35,],[4,4,28,4,4,34,36,37,38,39,40,41,42,43,44,45,48,49,]),'Atrib':([0,3,],[7,12,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -26,17 +26,28 @@ for _k, _v in _lr_goto_items.items():
        _lr_goto[_x][_k] = _y
 del _lr_goto_items
 _lr_productions = [
-  ("S' -> ExpressionInit","S'",1,None,None,None),
-  ('ExpressionInit -> Atribs','ExpressionInit',1,'p_Expression_Init','yacc.py',30),
-  ('Atribs -> Atrib ;','Atribs',2,'p_Atribs','yacc.py',35),
-  ('Atribs -> Atribs Atrib ;','Atribs',3,'p_Atribs','yacc.py',36),
-  ('Atrib -> ID ATRIB Expre','Atrib',3,'p_Atrib','yacc.py',44),
-  ('Expre -> Expre SUM Expre','Expre',3,'p_Expre','yacc.py',48),
-  ('Expre -> Expre SUB Expre','Expre',3,'p_Expre','yacc.py',49),
-  ('Expre -> Expre MULT Expre','Expre',3,'p_Expre','yacc.py',50),
-  ('Expre -> Expre DIV Expre','Expre',3,'p_Expre','yacc.py',51),
-  ('Expre -> Expre MOD Expre','Expre',3,'p_Expre','yacc.py',52),
-  ('Expre -> LParen Expre RParen','Expre',3,'p_Expre_Paren','yacc.py',58),
-  ('Expre -> ID','Expre',1,'p_Expre_ID','yacc.py',62),
-  ('Expre -> NUM','Expre',1,'p_Expre_NUM','yacc.py',66),
+  ("S' -> Init","S'",1,None,None,None),
+  ('Init -> Cond','Init',1,'p_Init','yacc.py',30),
+  ('Init -> Atribs','Init',1,'p_Init','yacc.py',31),
+  ('Cond -> Expre GT Expre','Cond',3,'p_Cond','yacc.py',46),
+  ('Cond -> Expre LT Expre','Cond',3,'p_Cond','yacc.py',47),
+  ('Cond -> Expre GEQ Expre','Cond',3,'p_Cond','yacc.py',48),
+  ('Cond -> Expre LEQ Expre','Cond',3,'p_Cond','yacc.py',49),
+  ('Cond -> Expre EQ Expre','Cond',3,'p_Cond','yacc.py',50),
+  ('Cond -> Expre NEQ Expre','Cond',3,'p_Cond','yacc.py',51),
+  ('Cond -> Cond OR Cond','Cond',3,'p_Cond','yacc.py',52),
+  ('Cond -> Cond AND Cond','Cond',3,'p_Cond','yacc.py',53),
+  ('Cond -> NOT Cond','Cond',2,'p_Cond_Not','yacc.py',57),
+  ('Cond -> LParen Cond RParen','Cond',3,'p_Cond_Paren','yacc.py',61),
+  ('Atribs -> Atrib ;','Atribs',2,'p_Atribs','yacc.py',65),
+  ('Atribs -> Atribs Atrib ;','Atribs',3,'p_Atribs','yacc.py',66),
+  ('Atrib -> ID ATRIB Expre','Atrib',3,'p_Atrib','yacc.py',73),
+  ('Expre -> Expre SUM Expre','Expre',3,'p_Expre','yacc.py',77),
+  ('Expre -> Expre SUB Expre','Expre',3,'p_Expre','yacc.py',78),
+  ('Expre -> Expre MULT Expre','Expre',3,'p_Expre','yacc.py',79),
+  ('Expre -> Expre DIV Expre','Expre',3,'p_Expre','yacc.py',80),
+  ('Expre -> Expre MOD Expre','Expre',3,'p_Expre','yacc.py',81),
+  ('Expre -> LParen Expre RParen','Expre',3,'p_Expre_Paren','yacc.py',85),
+  ('Expre -> ID','Expre',1,'p_Expre_ID','yacc.py',89),
+  ('Expre -> NUM','Expre',1,'p_Expre_NUM','yacc.py',93),
 ]
