@@ -10,7 +10,7 @@ class ParserPySMT(object):
             "+": "BVAdd",
             "-": "BVSub",
             "*": "BVMul",
-            "/": "BVDiv",
+            "/": "BVUDiv",
             "%": "BVURem",
         }
         self.precedence = (
@@ -28,8 +28,13 @@ class ParserPySMT(object):
 
     def p_Init(self, p):
         """Init : Cond
-                | Atribs"""
+                | Atribs
+                | Empty"""
         self.parser.PySMT = f"{p[1]}"
+
+    def p_Empty(self,p):
+        "Empty : "
+        p[0] = "TRUE()"
 
     bool_map = {
         ">": "BVUGT",
@@ -98,9 +103,9 @@ class ParserPySMT(object):
         self.parser.sucesso = False
 
 
-with open(f"tests/{sys.argv[1]}.txt") as f:
-    content = f.read()
+# with open(f"tests/{sys.argv[1]}.txt") as f:
+#     content = f.read()
 
-text = ParserPySMT().compile(content)
+# text = ParserPySMT().compile(content)
 
-print(text)
+# print(text)
