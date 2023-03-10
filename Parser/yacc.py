@@ -23,8 +23,9 @@ class ParserPySMT(object):
     
     def compile(self, code):
         self.parser.PySMT = ""
+        self.parser.mutatedState = set()
         self.parser.parse(code, lexer=self.lexer.lexer)
-        return self.parser.PySMT
+        return self.parser.PySMT, self.parser.mutatedState
 
     def p_Init(self, p):
         """Init : Cond
@@ -76,6 +77,7 @@ class ParserPySMT(object):
         
     def p_Atrib(self, p):
         """Atrib : ID ATRIB Expre"""
+        self.parser.mutatedState.add(p[1])
         p[0] = f"Equals(prox['{p[1]}'], {p[3]})"
 
     def p_Expre(self, p):

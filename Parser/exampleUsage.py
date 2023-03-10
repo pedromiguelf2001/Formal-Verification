@@ -2,6 +2,7 @@ from yacc import ParserPySMT
 from pprint import pprint
 from pysmt.shortcuts import *
 
+
 # ---------------- Utilizador ----------------
 cfa = {
     "init": (
@@ -54,25 +55,31 @@ for _, transitions in cfa.values():
         targets.add(targetNode)
 
 initialNode = set(cfa.keys()) - targets
-
-print(initialNode)
 # end find start node
 
 def trans(curr, prox):
+    debug = []
     formulas = []
     for label, (body, trans) in cfa.items():
-        nodeBody = compiler.compile(body)
+        nodeBody, mutatedState = compiler.compile(body)
         if label in initialNode:
-            nodeBody = nodeBody.replace("prox", "curr")
+            nodeBody = "TRUE()"#nodeBody.replace("prox", "curr")
+            mutatedState = set()
+        
+        debug.append(mutatedState)
+        preservedVars = [var for var in state["variables"] if var not in mutatedState and var != "pc"]
+        preservedFormula = And([Equals(prox[var], curr[var]) for var in preservedVars])
 
         for targetNode, cond in trans:
+            condFormula, _ = compiler.compile(cond)
             formula = And(
                 eval(nodeBody),
-                eval(compiler.compile(cond)),
+                eval(condFormula),
                 Equals(curr["pc"], indices[label]),
-                Equals(prox["pc"], indices[targetNode])
+                Equals(prox["pc"], indices[targetNode]),
+                preservedFormula
             )
-            print(formula.serialize())
+            debug.append(formula.serialize())
             formulas.append(formula)
 
     return Or(formulas)
@@ -80,9 +87,52 @@ def trans(curr, prox):
 # TODO: preservar variáveis
 
 # ---------------- Aplicação ----------------
-curr = genState(state["variables"], 0, state["size"])
-prox = genState(state["variables"], 1, state["size"])
-formula = trans(curr, prox)
+# curr = genState(state["variables"], 0, state["size"])
+# prox = genState(state["variables"], 1, state["size"])
+# formula = trans(curr, prox)
 
 print()
-print(formula.serialize())
+# print(formula.serialize())
+
+# ---------------- Testes ----------------
+def bmc_always(declare, init, trans, inv, K, n):
+    for k in range(1,K+1):
+        formula = TRUE()
+            
+        trace = [declare(state["variables"], i, state["size"]) for i in range(k)]
+
+        # adicionar o estado inicial
+        formula = And(formula, And(
+            Equals(trace[0]["pc"], BV(0, 16)),
+            Equals(trace[0]["x"], BV(5, 16)),
+            Equals(trace[0]["y"], BV(4, 16)),
+            Equals(trace[0]["z"], BV(0, 16))
+        ))
+        
+        for i in range(k - 1):
+            formula = And(formula, And(trans(trace[i], trace[i+1])))
+            
+        # adicionar a negação do invariante
+        formula = And(formula, Not(And([inv(trace[i], 5, 4, n) for i in range(k-1)])))
+
+        model = get_model(formula)
+
+        if model:
+            print(model)
+            for i in range(k):
+                print("Passo ", i)
+                for v in trace[i]:
+                    print(v, "=", model[trace[i][v]])
+                print("----------------")
+            print("O invariante não se mantém nos primeiros", k, "passos")
+            return None
+        else:
+            print(formula)
+        
+    print(f"O invariante mantém-se nos primeiros {K} passos")
+
+# invariante -> x*y+z = a*b
+def check_inv(state, a, b, n):
+    return Equals(BVAdd(BVMul(state['x'], state['y']), state['z']), BVMul(BV(a, 16), BV(b, 16)))
+
+bmc_always(genState, init, trans, check_inv, 15, 16)
