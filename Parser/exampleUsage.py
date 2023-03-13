@@ -57,6 +57,13 @@ for _, transitions in cfa.values():
 initialNode = set(cfa.keys()) - targets
 # end find start node
 
+def genInit():
+    ini = list(initialNode)[0]
+    code, vars = compiler.compile(cfa[ini][0])
+    func = f"lambda state: {code.replace('prox', 'state')}"
+    #print(code,func)
+    return eval(func)
+
 def trans(curr, prox):
     debug = []
     formulas = []
@@ -84,8 +91,6 @@ def trans(curr, prox):
 
     return Or(formulas)
 
-# TODO: preservar variáveis
-
 # ---------------- Aplicação ----------------
 # curr = genState(state["variables"], 0, state["size"])
 # prox = genState(state["variables"], 1, state["size"])
@@ -98,22 +103,28 @@ print()
 def bmc_always(declare, init, trans, inv, K, n):
     for k in range(1,K+1):
         formula = TRUE()
-            
-        trace = [declare(state["variables"], i, state["size"]) for i in range(k)]
 
+        trace = [declare(state["variables"], i, state["size"]) for i in range(k)]
+        initializer = genInit()
+        inited = And(
+            initializer(trace[0]),
+            Equals(trace[0]["pc"], BV(0, 16))
+        )
+        print(inited)
         # adicionar o estado inicial
-        formula = And(formula, And(
-            Equals(trace[0]["pc"], BV(0, 16)),
-            Equals(trace[0]["x"], BV(5, 16)),
-            Equals(trace[0]["y"], BV(4, 16)),
-            Equals(trace[0]["z"], BV(0, 16))
-        ))
+        formula = And(formula, inited)
+        # formula = And(formula, And(
+        #     Equals(trace[0]["pc"], BV(0, 16)),
+        #     Equals(trace[0]["x"], BV(5, 16)),
+        #     Equals(trace[0]["y"], BV(4, 16)),
+        #     Equals(trace[0]["z"], BV(0, 16))
+        # ))
         
         for i in range(k - 1):
             formula = And(formula, And(trans(trace[i], trace[i+1])))
             
         # adicionar a negação do invariante
-        formula = And(formula, Not(And([inv(trace[i], 5, 4, n) for i in range(k-1)])))
+        formula = And(formula, (And([inv(trace[i], 5, 4, n) for i in range(k-1)])))
 
         model = get_model(formula)
 
@@ -125,7 +136,7 @@ def bmc_always(declare, init, trans, inv, K, n):
                     print(v, "=", model[trace[i][v]])
                 print("----------------")
             print("O invariante não se mantém nos primeiros", k, "passos")
-            return None
+            #return None
         else:
             print(formula)
         
@@ -136,3 +147,6 @@ def check_inv(state, a, b, n):
     return Equals(BVAdd(BVMul(state['x'], state['y']), state['z']), BVMul(BV(a, 16), BV(b, 16)))
 
 bmc_always(genState, init, trans, check_inv, 15, 16)
+
+
+
