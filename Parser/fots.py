@@ -101,7 +101,7 @@ def bmc_always(fots, inv, K):
         # adicionar as transições
         transitions = And([fots.trans(trace[i], trace[i+1]) for i in range(k - 1)])
         # adicionar a negação do invariante
-        invariant = And([inv(trace[i], 5, 4, 16) for i in range(k-1)])
+        invariant = Not(And([inv(trace[i], 16) for i in range(k-1)]))
 
         formula = And(initialization, transitions, invariant)
         model = get_model(formula)
@@ -116,8 +116,7 @@ def bmc_always(fots, inv, K):
             print("O invariante não se mantém nos primeiros", k, "passos")
         else:
             print(formula)
-        
-    print(f"O invariante mantém-se nos primeiros {K} passos")
+            print(f"O invariante mantém-se nos primeiros {K} passos")
 
 # propriedade de segurança
 def check_inv(state, n):
@@ -126,9 +125,5 @@ def check_inv(state, n):
 
 # ---------------- Main ----------------
 fots = FOTS(cfa, state)
-
-form = BVUGT(BVMul(BV(65534, 16), BV(2, 16)), BV(65534, 16))
-model = get_model(form)
-print(model)
 
 bmc_always(fots, check_inv, 15)
