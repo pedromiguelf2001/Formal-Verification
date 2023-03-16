@@ -7,7 +7,7 @@ from pysmt.shortcuts import *
 # ---------------- Utilizador ----------------
 cfa = {
     "init": (
-        "x = 5; y = 4; z = 0;",
+        "x = 5; y = 2; z = 0;",
         [("switch", "")]
     ),
     "switch": (
@@ -143,7 +143,7 @@ def same(state1,state2):
 
 
 
-def model_checkingP(fots, N, M, k):
+def model_checking_Interpolants(fots, N, M, k):
 
         # Criar todos os estados que poderão vir a ser necessários.
         X = [fots.declare2(i,'X') for i in range(k)]
@@ -151,10 +151,10 @@ def model_checkingP(fots, N, M, k):
         
         # Estabelecer a ordem pela qual os pares (n,m) vão surgir. Por exemplo:
         order = sorted([(a,b) for a in range(1,N+1) for b in range(1,M+1)],key=lambda tup:tup[0]+tup[1]) 
-        print(order)
         
         for (n,m) in order:
             Tn = And([fots.trans(X[i], X[i+1]) for i in range(k - 1)])
+
             I = fots.init(X[0])
             
             Rn = And(I, Tn)
@@ -162,7 +162,7 @@ def model_checkingP(fots, N, M, k):
             Bm = And([invert(fots.trans)(Y[i], Y[i+1]) for i in range(m)])
             
             E = fots.error(Y[0])
-            print(E)
+
             Um = And(E, Bm)
 
             Vnm = And(Rn, same(X[n], Y[m]), Um)
@@ -190,7 +190,6 @@ def model_checkingP(fots, N, M, k):
                     S = rename(C, X[n])
                     while True:
                         A = And(S, fots.trans(X[n], Y[m]))
-                        print(Um)
                         if get_model(And(A,Um)):
                             print("Não é possível encontrar um majorante")
                             break
@@ -206,6 +205,49 @@ def model_checkingP(fots, N, M, k):
                             
             print("unknown" )
             
+def kinduction_always(fots, inv, k, bits):
+    
+    trace = [fots.declare(i) for i in range(k+1)]
+
+    # testar invariante para os estados iniciais (Válidade de P se e só se ~P Unsat)
+    initialization = fots.init(trace[0]) 
+   
+    transitions = And([fots.trans(trace[i], trace[i+1]) for i in range(k-1)])   
+
+    invariant = Or([Not(inv(trace[i], bits)) for i in range(k)])
+
+    sat = And(initialization, transitions, invariant)
+    model_init = get_model(sat)
+
+    if model_init:
+        print('A propiedade falha em pelo menos um dos', k, ' primeiros estados.')
+        for i in trace[0]:
+            print(i,' = ', model_init[trace[0][i]])
+        return
+        
+    transitions2 = And([fots.trans(trace[i], trace[i+1]) for i in range(k)])
+
+    invariant2 = And([inv(trace[i], bits) for i in range(k)])
+
+    inv_final = (Not(inv(trace[k-1], bits)))
+
+    pass_indutivo = And(transitions2, invariant2, inv_final)
+    model_final = get_model(pass_indutivo)
+
+    if model_final:
+        print('A propiedade falha num dos estados.')
+        for i in trace[0]:
+            print(i,' = ', model_final[trace[0][i]])
+        return
+    
+    #if s.check() == unknown:
+    #    print('Inconclusivo...')
+    #    return
+
+    print('A propriedade é válida!')
+   
+
+
 
 
 
@@ -222,4 +264,5 @@ form = BVUGT(BVMul(BV(65534, 16), BV(2, 16)), BV(65534, 16))
 model = get_model(form)
 
 #bmc_always(fots, check_inv, 15)
-model_checkingP(fots, 20, 20, 15)
+#model_checking_Interpolants(fots, 20, 20, 15)
+#kinduction_always(fots, check_inv, 20, 16)
