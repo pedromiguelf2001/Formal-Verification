@@ -60,9 +60,8 @@ pc = Symbol("pc", pt.BV8)
 
 variables = [x, y, z, pc]
 
-safety = BVUGE(BVAdd(x, x), x)
-pre = And(Equals(x, BV(2, 8)), Equals(y, BV(4, 8)), Equals(z, zero), Equals(pc, zero))
-pos = TRUE()
+safety = Not(Equals(pc, BV(5, 8)))
+init = And(Equals(x, BV(2, 8)), Equals(y, BV(4, 8)), Equals(z, zero), Equals(pc, zero))
 
 # Attribuições
 subSwitch = {
@@ -93,54 +92,40 @@ isEnd = Equals(y, zero)
 isOverflow = BVULT(BVMul(x, BV(2, 8)), x)
 isSwitch = BVUGE(BVMul(x, BV(2, 8)), x)
 # Fluxos
-fluxoSwitch = And(
-    Equals(pc, one),
-    isEven,
-    isOdd,
-    isEnd
-)
-fluxoEven = And(
-    Equals(pc, BV(2, 8)),
-    isSwitch,
-    isOverflow
-)
-fluxoOdd = And(
-    Equals(pc, BV(3, 8)),
-    TRUE()
-)
-fluxoEnd = And(
-    Equals(pc, BV(4, 8)),
-    TRUE()
-)
-fluxoOverflow = And(
-    Equals(pc, BV(5, 8)),
-    TRUE()
-)
 
+a = Symbol("a", pt.BV8)
 
+t01 = And(Equals(pc, zero), TRUE())
+t12 = And(Equals(pc, one), isEven)
+t13 = And(Equals(pc, one), isOdd)
+t14 = And(Equals(pc, one), isEnd)
+t21 = And(Equals(pc, BV(2, 8)), isSwitch)
+t25 = And(Equals(pc, BV(2, 8)), isOverflow)
+t31 = And(Equals(pc, BV(3, 8)), TRUE())
+t44 = And(Equals(pc, BV(4, 8)), TRUE())
+t55 = And(Equals(pc, BV(5, 8)), TRUE())
 
-
-# fluxoSwitch = And(
-#     Implies(And(isEven, safety), safety),
-#     Implies(And(isOdd, safety), safety),
-#     Implies(And(isEnd, safety), pos),
-# )
-
-# fluxo = lambda formula : And(
-#     Implies(And(isEven, safety), substitute(formula, subEven)),
-#     Implies(And(isOdd, safety), substitute(formula, subOdd)),
-#     Implies(And(isEnd, safety), pos),
-# )
+def trans(formula):
+    return Or(
+        Implies(t01, substitute(formula, )),
+        Implies(t12, ),
+        Implies(t13, ),
+        Implies(t14, ),
+        Implies(t21, ),
+        Implies(t25, ),
+        Implies(t31, ),
+        Implies(t44, ),
+        Implies(t55, )
+    )
 
 f = safety
 
-for i in range(2):
-    f = fluxo(f)
+k = 10
+vc = init
+for i in k:
+    vc = Implies(vc, And(trans(vc), safety))
 
 
-#vc = Implies(pre, And(safety, ForAll([x, y, z], fluxoSwitch)))
-vc = Implies(pre, And(safety, fluxoSwitch))
-vc = Implies(pre, And(safety, f))
 
 def proveSMT(formula):
     print("Serialization of the formula:")

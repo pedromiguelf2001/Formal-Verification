@@ -2,40 +2,6 @@ from yacc import ParserPySMT
 from pprint import pprint
 from pysmt.shortcuts import *
 
-
-# ---------------- Utilizador ----------------
-cfa = {
-    "init": (
-        "x = 2; y = 4; z = 0;",
-        [("switch", "")]
-    ),
-    "switch": (
-        "",
-        [("isEven", "y != 0 && (y % 2) == 0"), ("isOdd", "y != 0 && (y % 2) != 0"), ("end", "y == 0")]
-    ),
-    "isEven": (
-        "x = 2 * x; y = y / 2;",
-        [("switch", ""), ("overflow", "x*2 < x")]
-    ),
-    "isOdd": (
-        "y = y - 1; z = z + x;",
-        [("switch", "")]
-    ),
-    "end": (
-        "",
-        [("end", "")]
-    ),
-    "overflow": (
-        "",
-        [("overflow", "")]
-    )
-}
-
-state = {
-    "variables": ["pc", "x", "y", "z"],
-    "size": 16
-}
-
 # PC palavra reservada
 class FOTS(object):
     def __init__(self, cfa, state):
@@ -57,7 +23,7 @@ class FOTS(object):
     # gera função que inicializa o estado na forma (state -> dict)
     def genInit(self):
         ini = list(self.initialNode)[0]
-        code, _ = self.compiler.compile(cfa[ini][0])
+        code, _ = self.compiler.compile(self.cfa[ini][0])
         userIni = eval(f"lambda state: {code.replace('prox', 'state')}")
         func =  lambda state : And(userIni(state), Equals(state["pc"], BV(0, self.state["size"])))
         return func
@@ -65,7 +31,7 @@ class FOTS(object):
     def trans(self, curr, prox):
         debug = []
         formulas = []
-        for label, (body, trans) in cfa.items():
+        for label, (body, trans) in self.cfa.items():
             nodeBody, mutatedState = self.compiler.compile(body) if label not in self.initialNode else ("TRUE()", set())
 
             debug.append(mutatedState)
@@ -83,6 +49,7 @@ class FOTS(object):
                 )
                 debug.append(formula.serialize())
                 formulas.append(formula)
+        print("DEBUG", debug)
 
         return Or(formulas)
     
@@ -93,7 +60,7 @@ class FOTS(object):
 
 # ---------------- Testes ----------------
 def bmc_always(fots, inv, K):
-    for k in range(1,K+1):
+    for k in range(1, K+1):
         trace = [fots.declare(i) for i in range(k)]
 
         # adicionar o estado inicial
@@ -124,6 +91,40 @@ def check_inv(state, n):
     return NotEquals(state["pc"], BV(5, n))
 
 # ---------------- Main ----------------
-fots = FOTS(cfa, state)
+if __name__ == "__main__":
+    # ---------------- Utilizador ----------------
+    cfa = {
+        "init": (
+            "x = 2; y = 4; z = 0;",
+            [("switch", "")]
+        ),
+        "switch": (
+            "",
+            [("isEven", "y != 0 && (y % 2) == 0"), ("isOdd", "y != 0 && (y % 2) != 0"), ("end", "y == 0")]
+        ),
+        "isEven": (
+            "x = 2 * x; y = y / 2;",
+            [("switch", "x*2 >= x"), ("overflow", "x*2 < x")]
+        ),
+        "isOdd": (
+            "y = y - 1; z = z + x;",
+            [("switch", "")]
+        ),
+        "end": (
+            "",
+            [("end", "")]
+        ),
+        "overflow": (
+            "",
+            [("overflow", "")]
+        )
+    }
 
-bmc_always(fots, check_inv, 15)
+    state = {
+        "variables": ["pc", "x", "y", "z"],
+        "size": 16
+    }
+
+    fots = FOTS(cfa, state)
+
+    bmc_always(fots, check_inv, 15)
