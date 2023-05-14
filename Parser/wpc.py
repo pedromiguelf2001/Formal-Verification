@@ -33,6 +33,21 @@ state = {
     "size": 8
 }
 
+def proveSMT(formula):
+    print("Serialization of the formula:")
+    formula = Not(formula)
+    print(formula.serialize())
+    print("Simplification of the formula:")
+    print(formula.simplify().serialize())
+
+    with Solver(name="z3") as solver:
+        solver.add_assertion(formula)
+        if not solver.solve():
+            print("Proved")
+        else:
+            print("Failed to prove")
+            getVars(formula, solver)
+
 def getCore(formula):
     from pysmt.rewritings import conjunctive_partition
     conj = conjunctive_partition(formula)
@@ -61,99 +76,91 @@ pc = Symbol("pc", pt.BV8)
 variables = [x, y, z, pc]
 
 safety = BVUGE(BVAdd(x, x), x)
-pre = And(Equals(x, BV(2, 8)), Equals(y, BV(4, 8)), Equals(z, zero), Equals(pc, zero))
+pre = And(Equals(x, BV(70, 8)), Equals(y, BV(4, 8)), Equals(z, zero), Equals(pc, one))
 pos = TRUE()
 
 # Attribuições
-subSwitch = {
-    pc: one,
-}
+# s1
+subSwitch = dict()
+# s2
 subEven = {
-    pc: BV(2, 8),
     y: BVUDiv(y, BV(2, 8)),
     x: BVMul(x, BV(2, 8)),
 }
+# s3
 subOdd = {
-    pc: BV(3, 8),
     y: BVSub(y, BV(1, 8)),
     z: BVAdd(z, x)
 }
-subEnd = {
-    pc: BV(4, 8),
-}
-subOverflow = {
-    pc: BV(5, 8),
-}
+# s4
+subEnd = dict()
+# s5
+subOverflow = dict()
 
 # Escolha não-determinística
 # Condições
-isEven = And(NotEquals(y, zero), Equals(BVURem(y, BV(2, 8)), zero))
-isOdd  = And(NotEquals(y, zero), NotEquals(BVURem(y, BV(2, 8)), zero))
-isEnd = Equals(y, zero)
-isOverflow = BVULT(BVMul(x, BV(2, 8)), x)
-isSwitch = BVUGE(BVMul(x, BV(2, 8)), x)
-# Fluxos
-fluxoSwitch = And(
-    Equals(pc, one),
-    isEven,
-    isOdd,
-    isEnd
-)
-fluxoEven = And(
-    Equals(pc, BV(2, 8)),
-    isSwitch,
-    isOverflow
-)
-fluxoOdd = And(
-    Equals(pc, BV(3, 8)),
-    TRUE()
-)
-fluxoEnd = And(
-    Equals(pc, BV(4, 8)),
-    TRUE()
-)
-fluxoOverflow = And(
-    Equals(pc, BV(5, 8)),
-    TRUE()
-)
+isEven = And(Equals(pc, one), NotEquals(y, zero), Equals(BVURem(y, BV(2, 8)), zero))
+isOdd  = And(Equals(pc, one), NotEquals(y, zero), NotEquals(BVURem(y, BV(2, 8)), zero))
+isEnd  = And(Equals(pc, one), Equals(y, zero))
+# back to switch
+isOverflow = And(Equals(pc, BV(2, 8)), BVULT(BVMul(x, BV(2, 8)), x))
+isSwitch   = And(Equals(pc, BV(2, 8)), BVUGE(BVMul(x, BV(2, 8)), x))
+fluxoOdd = And(Equals(pc, BV(3, 8)), TRUE())
+# remain in terminal states
+# vc = generator(safety, substitutions)
+# fs = generator(safety, substitutions)
 
+# for f in fs:
+#     vc = Implies(pre, And(safety, f))
+#     proveSMT(vc)
+fluxoEnd = And(Equals(pc, BV(4, 8)), TRUE())
+fluxoOverflow = And(Equals(pc, BV(5, 8)), TRUE())
 
+def transition(formula):
+    return Or(
+        Implies(And(isEven, formula), substitute(formula, subEven)),
+        Implies(And(isOdd, formula), substitute(formula, subOdd)),
+        Implies(And(isEnd, formula), substitute(formula, subEnd)),
+        Implies(And(isOverflow, formula), substitute(formula, subOverflow)),
+        Implies(And(isSwitch, formula), substitute(formula, subSwitch)),
+        Implies(And(fluxoOdd, formula), substitute(formula, subSwitch)),
+        Implies(And(fluxoEnd, formula), substitute(formula, subEnd)),
+        Implies(And(fluxoOverflow, formula), substitute(formula, subOverflow)),
+    )
 
+substitutions = [
+    (subSwitch, BV(1, 8)),
+    (subEven, BV(2, 8)),
+    (subOdd, BV(3, 8)),
+    (subEnd, BV(4, 8)),
+    (subOverflow, BV(5, 8)),
+]
 
-# fluxoSwitch = And(
-#     Implies(And(isEven, safety), safety),
-#     Implies(And(isOdd, safety), safety),
-#     Implies(And(isEnd, safety), pos),
-# )
+def newWay(formulas, substitutions):
+    return [
+        (substitute(formula, sub), state)
+        for formula in formulas
+        for sub, state in substitutions
+    ]
 
-# fluxo = lambda formula : And(
-#     Implies(And(isEven, safety), substitute(formula, subEven)),
-#     Implies(And(isOdd, safety), substitute(formula, subOdd)),
-#     Implies(And(isEnd, safety), pos),
-# )
+def generator(start, substitutions, iterations=3):
+    form = [start]
+    for _ in range(iterations):
+        form = newWay(form, substitutions)
+    return form
 
 f = safety
-
-for i in range(2):
-    f = fluxo(f)
-
+for i in range(3):
+    f = transition(f)
+vc = Implies(pre, And(safety, f))
+proveSMT(vc)
 
 #vc = Implies(pre, And(safety, ForAll([x, y, z], fluxoSwitch)))
-vc = Implies(pre, And(safety, fluxoSwitch))
-vc = Implies(pre, And(safety, f))
-
-def proveSMT(formula):
-    print("Serialization of the formula:")
-    formula = Not(formula)
-    print(formula.serialize())
-
-    with Solver(name="z3") as solver:
-        solver.add_assertion(formula)
-        if not solver.solve():
-            print("Proved")
-        else:
-            print("Failed to prove")
-            getVars(formula, solver)
 
 
-proveSMT(vc)
+# vc = generator(safety, substitutions)
+# fs = generator(safety, substitutions)
+
+# for f in fs:
+#     vc = Implies(pre, And(safety, f))
+#     proveSMT(vc)
