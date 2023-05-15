@@ -1,6 +1,7 @@
 from yacc import ParserPySMT
 from pprint import pprint
 from pysmt.shortcuts import *
+import itertools 
 
 
 # ---------------- Utilizador ----------------
@@ -146,7 +147,5 @@ def bmc_always(declare, init, trans, inv, K, n):
 def check_inv(state, a, b, n):
     return Equals(BVAdd(BVMul(state['x'], state['y']), state['z']), BVMul(BV(a, 16), BV(b, 16)))
 
-bmc_always(genState, init, trans, check_inv, 15, 16)
-
-
+#bmc_always(genState, init, trans, check_inv, 15, 16)
 
