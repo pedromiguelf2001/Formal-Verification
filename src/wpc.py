@@ -46,21 +46,10 @@ def proveSMT(formula):
             print("Proved")
         else:
             print("Failed to prove")
-            getVars(formula, solver)
-
-def getCore(formula):
-    from pysmt.rewritings import conjunctive_partition
-    conj = conjunctive_partition(formula)
-    ucore = get_unsat_core(conj)
-    print(f"UNSAT-Core size {len(ucore)}")
-    for f in ucore:
-        print(f.serialize())
-
-def getVars(formula, solver):
-    model = get_model(formula)
-    for l in [x for x in formula.get_free_variables()]:
-        print(f"{l} = {model.get_value(l)}")
-    print(model)
+            model = get_model(formula)
+            for l in [x for x in formula.get_free_variables()]:
+                print(f"{l} = {model.get_value(l)}")
+            print(model)
 
 
 bits = 8

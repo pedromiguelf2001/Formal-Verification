@@ -75,13 +75,14 @@ class LexerPySMT(object):
         t.lexer.skip(1)
         return None
 
-# with open(f"tests/{sys.argv[1]}.txt") as f:
-#     content = f.read()
-#     print(content)
 
-# lexer = LexerPySMT()
-# lexer.input(content)
+if __name__ == "__main__":
+    with open(f"tests/{sys.argv[1]}.txt") as f:
+        content = f.read()
+        print(content)
 
+    lexer = LexerPySMT()
+    lexer.input(content)
 
-# for token in lexer.lexer:
-#     print(f"({repr(token.type)} {repr(token.value)})")
+    for token in lexer.lexer:
+        print(f"({repr(token.type)} {repr(token.value)})")

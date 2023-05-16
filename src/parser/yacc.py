@@ -1,5 +1,4 @@
-from lexer import LexerPySMT
-import ast
+from .lexer import LexerPySMT
 import ply.yacc as yacc
 import sys
 
@@ -105,9 +104,10 @@ class ParserPySMT(object):
         self.parser.sucesso = False
 
 
-# with open(f"tests/{sys.argv[1]}.txt") as f:
-#     content = f.read()
+if __name__ == "__main__":
+    with open(f"tests/{sys.argv[1]}.txt") as f:
+        content = f.read()
 
-# text = ParserPySMT().compile(content)
+    text = ParserPySMT().compile(content)
 
-# print(text)
+    print(text)

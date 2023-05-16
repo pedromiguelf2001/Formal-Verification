@@ -29,7 +29,8 @@ def craig_interpolation(fots, k, Inv, Q, s):
     except NoSolverAvailableError:
         return None
 
-def craig_interpolation_func(fots, k, Inv, Q, s):
+# In this definition Q is a function
+def craig_interpolation_f(fots, k, Inv, Q, s):
     """
     We can implement lift using Craig interpolation between
     :math:`A: s = s_n` and
@@ -59,7 +60,6 @@ def PDR(
     inc = lambda n: n + 1,
     get_currently_known_invariant=lambda: TRUE(),
     pd = True,
-    lift = craig_interpolation,
     strengthen = lambda k, Inv, o: Inv
 ):
     """
@@ -74,10 +74,6 @@ def PDR(
     InternalInv = TRUE()
     # the set of current proof obligations.
     Obligations = []
-
-    # safety property
-    sp = lambda state : NotEquals(state["pc"], BV(5, 16))
-    #sp = lambda state : BVUGE(state["x"], BV(0, 16))
 
 
     while k <= k_max:
@@ -95,7 +91,7 @@ def PDR(
             init,
             Or([And(
                 And([fots.trans(frames[i], frames[i+1]) for i in range(n)]),
-                Not(sp(frames[n]))
+                Not(fots.safety(frames[n]))
             ) for n in range(k)])
         )
 
@@ -118,7 +114,7 @@ def PDR(
         # begin: attempt to prove each proof obligation using k-induction
         if pd:
             for o in O_prev:
-                # TODO Não sei exatamente como substituir o o[n] por Not(sp(frames[n]))
+                # TODO Não sei exatamente como substituir o o[n] por Not(fots.safety(frames[n]))
                 base_case_o = And(
                     init,
                     Or([And(
@@ -156,8 +152,8 @@ def PDR(
 
         # begin: check the inductive-step case for the safety property P
         step_case_n = And(
-            And([And(sp(frames[i]), fots.trans(frames[i], frames[i+1])) for i in range(k)]),
-            Not(sp(frames[k]))
+            And([And(fots.safety(frames[i]), fots.trans(frames[i], frames[i+1])) for i in range(k)]),
+            Not(fots.safety(frames[k]))
         )
         ExternalInv = get_currently_known_invariant()
         Inv = And(InternalInv, ExternalInv)
@@ -168,7 +164,7 @@ def PDR(
                 # satisfying predecessor state
                 model = get_model(stepFormula)
                 s = And([EqualsOrIff(name, val) for name, val in model])
-                cti = craig_interpolation_func(fots, k, Inv, sp, s)
+                cti = craig_interpolation_f(fots, k, Inv, fots.safety, s)
                 if cti:
                     Obligations += [Not(cti)]
         else:
@@ -177,62 +173,3 @@ def PDR(
         k = inc(k)
     print("Property's status is unknown: exceeded maximum number of iterations")
     return None
-
-cfa = {
-    "init": (
-        "x = 65000; y = 2; z = 0;",
-        [("switch", "")]
-    ),
-    "switch": (
-        "",
-        [("isEven", "y != 0 && (y % 2) == 0"), ("isOdd", "y != 0 && (y % 2) != 0"), ("end", "y == 0")]
-    ),
-    "isEven": (
-        "x = 2 * x; y = y / 2;",
-        [("switch", "x*2 >= x"), ("overflow", "x*2 < x")]
-    ),
-    "isOdd": (
-        "y = y - 1; z = z + x;",
-        [("switch", "")]
-    ),
-    "end": (
-        "",
-        [("end", "")]
-    ),
-    "overflow": (
-        "",
-        [("overflow", "")]
-    )
-}
-
-state = {
-    "variables": ["pc", "x", "y", "z"],
-    "size": 16
-}
-fots = FOTS(cfa, state)
-
-cfas = {
-    "init": (
-        "x = 10;",
-        [("loop", "")]
-    ),
-    "loop": (
-        "x = x - 1;",
-        [("loop", "x > 1"), ("end", "x <= 1")]
-    ),
-    "end": (
-        "",
-        [("end", "")]
-    )
-}
-
-states = {
-    "variables": ["pc", "x"],
-    "size": 16
-}
-
-
-simple = FOTS(cfas, states)
-res = PDR(fots, 1, 15)
-
-print("result:", res)
