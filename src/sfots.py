@@ -1,13 +1,16 @@
 import itertools
-from parser.yacc import ParserPySMT
+from .parser.yacc import ParserPySMT
 from pysmt.shortcuts import *
+from .plotter import Plotter
 
 DEBUG = False
 
 # PC palavra reservada
-class FOTS(object):
+class SFOTS(object):
     def __init__(self, cfa, state):
+        self.PROGRAM_COUNTER = "pc"
         self.compiler = ParserPySMT()
+        self.plotter = Plotter(cfa)
         self.cfa = cfa
         self.state = state
         self.initialNode = self.findStartNode(self.cfa)
@@ -23,20 +26,20 @@ class FOTS(object):
         ini = list(self.initialNode)[0]
         code, _ = self.compiler.compile(self.cfa[ini][0])
         userIni = eval(f"lambda state: {code.replace('prox', 'state')}")
-        return lambda state : And(userIni(state), Equals(state["pc"], BV(0, self.state["size"])))
+        return lambda state : And(userIni(state), Equals(state[self.PROGRAM_COUNTER], BV(0, self.state["size"])))
 
     def declare(self, i):
         return {name: Symbol(f"{name}_{i}", BVType(self.state["size"])) for name in self.state["variables"]}
 
     def safety(self, state):
-        return And([NotEquals(state["pc"], self.indices[key]) for key in self.state["error_states"]])
+        return And([NotEquals(state[self.PROGRAM_COUNTER], self.indices[key]) for key in self.state["error_states"]])
 
     def trans(self, curr, prox):
         debug = []
         formulas = []
         for label, (body, trans) in self.cfa.items():
             nodeBody, mutatedState = self.compiler.compile(body) if label not in self.initialNode else ("TRUE()", set())
-            preservedVars = [var for var in self.state["variables"] if var not in mutatedState and var != "pc"]
+            preservedVars = [var for var in self.state["variables"] if var not in mutatedState and var != self.PROGRAM_COUNTER]
             preservedFormula = And([Equals(prox[var], curr[var]) for var in preservedVars])
             debug.append(mutatedState)
 
@@ -45,8 +48,8 @@ class FOTS(object):
                 formula = And(
                     eval(nodeBody),
                     eval(condFormula),
-                    Equals(curr["pc"], self.indices[label]),
-                    Equals(prox["pc"], self.indices[targetNode]),
+                    Equals(curr[self.PROGRAM_COUNTER], self.indices[label]),
+                    Equals(prox[self.PROGRAM_COUNTER], self.indices[targetNode]),
                     preservedFormula
                 )
                 debug.append(formula.serialize())
@@ -57,20 +60,23 @@ class FOTS(object):
 
     def declare2(self, i, k):
         return {name: Symbol(f"{name}!{k}_{i}", BVType(self.state["size"])) for name in self.state["variables"]}
+    
+    def plot(self):
+        self.plotter.plot()
 
 
 # ---------------- Métodos de Prova ----------------
 # Bounded model checking
-def bmc_always(fots, k_max):
+def bmc_always(sfots, k_max):
     for k in range(1, k_max+1):
-        trace = [fots.declare(i) for i in range(k)]
+        trace = [sfots.declare(i) for i in range(k)]
 
         # adicionar o estado inicial
-        initialization = fots.init(trace[0])
+        initialization = sfots.init(trace[0])
         # adicionar as transições
-        transitions = And([fots.trans(trace[i], trace[i+1]) for i in range(k - 1)])
+        transitions = And([sfots.trans(trace[i], trace[i+1]) for i in range(k - 1)])
         # adicionar a negação do invariante
-        invariant = Not(And([fots.safety(trace[i]) for i in range(k-1)]))
+        invariant = Not(And([sfots.safety(trace[i]) for i in range(k-1)]))
 
         formula = And(initialization, transitions, invariant)
         model = get_model(formula)
@@ -87,13 +93,13 @@ def bmc_always(fots, k_max):
             print(f"O invariante mantém-se nos primeiros {k} passos")
 
 # k-indução
-def kinduction_always(fots, k):
-    trace = [fots.declare(i) for i in range(k+1)]
+def kinduction_always(sfots, k):
+    trace = [sfots.declare(i) for i in range(k+1)]
 
     # testar invariante para os estados iniciais (Válidade de P se e só se ~P Unsat)
-    initialization = fots.init(trace[0])
-    transitions = And([fots.trans(trace[i], trace[i+1]) for i in range(k-1)])
-    invariant = Or([Not(fots.safety(trace[i])) for i in range(k)])
+    initialization = sfots.init(trace[0])
+    transitions = And([sfots.trans(trace[i], trace[i+1]) for i in range(k-1)])
+    invariant = Or([Not(sfots.safety(trace[i])) for i in range(k)])
 
     base_case = And(initialization, transitions, invariant)
     model_init = get_model(base_case)
@@ -105,9 +111,9 @@ def kinduction_always(fots, k):
         return False
 
     # testar invariante para os passos indutivos
-    transitions = And([fots.trans(trace[i], trace[i+1]) for i in range(k)])
-    invariant = And([fots.safety(trace[i]) for i in range(k)])
-    inv_final = Not(fots.safety(trace[k-1]))
+    transitions = And([sfots.trans(trace[i], trace[i+1]) for i in range(k)])
+    invariant = And([sfots.safety(trace[i]) for i in range(k)])
+    inv_final = Not(sfots.safety(trace[k-1]))
 
     inductive_step = And(transitions, invariant, inv_final)
     model_final = get_model(inductive_step)
@@ -136,22 +142,22 @@ def rename(form, state):
 def same(state1, state2):
     return And([Equals(state1[x], state2[x]) for x in state1])
 
-def model_checking_Interpolants(fots, N, M, k):
+def model_checking_Interpolants(sfots, N, M, k):
         # Criar todos os estados que poderão vir a ser necessários.
-        X = [fots.declare2(i,'X') for i in range(k)]
-        Y = [fots.declare2(i,'Y') for i in range(k)]
+        X = [sfots.declare2(i,'X') for i in range(k)]
+        Y = [sfots.declare2(i,'Y') for i in range(k)]
 
         # Estabelecer a ordem pela qual os pares (n,m) vão surgir. Por exemplo:
         order = sorted([(a,b) for a in range(1, N+1) for b in range(1, M+1)], key=lambda tup : tup[0]+tup[1])
 
         for (n,m) in order:
-            Tn = And([fots.trans(X[i], X[i+1]) for i in range(k - 1)])
-            I = fots.init(X[0])
+            Tn = And([sfots.trans(X[i], X[i+1]) for i in range(k - 1)])
+            I = sfots.init(X[0])
             Rn = And(I, Tn)
 
-            Bm = And([invert(fots.trans)(Y[i], Y[i+1]) for i in range(m)])
+            Bm = And([invert(sfots.trans)(Y[i], Y[i+1]) for i in range(m)])
 
-            E = Not(fots.safety(Y[0]))
+            E = Not(sfots.safety(Y[0]))
             Um = And(E, Bm)
 
             Vnm = And(Rn, same(X[n], Y[m]), Um)
@@ -170,7 +176,7 @@ def model_checking_Interpolants(fots, N, M, k):
 
             C0 = rename(C, X[0])
             C1 = rename(C, X[1])
-            T = fots.trans(X[0], X[1])
+            T = sfots.trans(X[0], X[1])
             #print(And(C0, T, Not(C1)))
 
             # C é invariante de T
@@ -181,7 +187,7 @@ def model_checking_Interpolants(fots, N, M, k):
             ### tenta gerar o majorante S
             S = rename(C, X[n])
             while True:
-                A = And(S, fots.trans(X[n], Y[m]))
+                A = And(S, sfots.trans(X[n], Y[m]))
                 if get_model(And(A,Um)):
                     print("Não é possível encontrar um majorante")
                     break
@@ -203,8 +209,8 @@ def at(formula, frame):
     subst = {v: frame["".join(v.symbol_name().split("_")[:-1])] for v in formula.get_free_variables()}
     return formula.substitute(subst)
 
-#lift(fots, k, Inv, o, s_o)
-def craig_interpolation(fots, k, Inv, Q, s):
+#lift(sfots, k, Inv, o, s_o)
+def craig_interpolation(sfots, k, Inv, Q, s):
     """
     We can implement lift using Craig interpolation between
     :math:`A: s = s_n` and
@@ -213,12 +219,12 @@ def craig_interpolation(fots, k, Inv, Q, s):
     the resulting interpolant satisfies the criteria for :math:`C` to be a valid
     lifting of s according to the requirements towards the function lift.
     """
-    frames = [fots.declare(i) for i in range(k+1)]
+    frames = [sfots.declare(i) for i in range(k+1)]
 
     A = at(s, frames[0])
     prec = And(
         at(Inv, frames[0]),
-        And([And(at(Q, frames[i]), fots.trans(frames[i], frames[i+1])) for i in range(k-1)]),
+        And([And(at(Q, frames[i]), sfots.trans(frames[i], frames[i+1])) for i in range(k-1)]),
     )
     B = Implies(prec, Not(at(Q, frames[k])))
     from pysmt.exceptions import NoSolverAvailableError
@@ -228,7 +234,7 @@ def craig_interpolation(fots, k, Inv, Q, s):
         return None
 
 # In this definition Q is a function
-def craig_interpolation_f(fots, k, Inv, Q, s):
+def craig_interpolation_f(sfots, k, Inv, Q, s):
     """
     We can implement lift using Craig interpolation between
     :math:`A: s = s_n` and
@@ -237,12 +243,12 @@ def craig_interpolation_f(fots, k, Inv, Q, s):
     the resulting interpolant satisfies the criteria for :math:`C` to be a valid
     lifting of s according to the requirements towards the function lift.
     """
-    frames = [fots.declare(i) for i in range(k+1)]
+    frames = [sfots.declare(i) for i in range(k+1)]
 
     A = at(s, frames[0])
     prec = And(
         at(Inv, frames[0]),
-        And([And(Q(frames[i]), fots.trans(frames[i], frames[i+1])) for i in range(k-1)]),
+        And([And(Q(frames[i]), sfots.trans(frames[i], frames[i+1])) for i in range(k-1)]),
     )
     B = Implies(prec, Not(Q(frames[k])))
     from pysmt.exceptions import NoSolverAvailableError
@@ -252,7 +258,7 @@ def craig_interpolation_f(fots, k, Inv, Q, s):
         return None
 
 def PDR(
-    fots,
+    sfots,
     k_init = 1,
     k_max = 15,#int(float('inf')),
     inc = lambda n: n + 1,
@@ -276,9 +282,9 @@ def PDR(
 
     while k <= k_max:
         print("k = ", k)
-        frames = [fots.declare(i) for i in range(k+1)]
-        transUntil = lambda n : [fots.trans(frames[i], frames[i+1]) for i in range(n)]
-        init = fots.init(frames[0])
+        frames = [sfots.declare(i) for i in range(k+1)]
+        transUntil = lambda n : [sfots.trans(frames[i], frames[i+1]) for i in range(n)]
+        init = sfots.init(frames[0])
 
         O_prev = Obligations
         Obligations = []
@@ -288,8 +294,8 @@ def PDR(
         base_case = And(
             init,
             Or([And(
-                And([fots.trans(frames[i], frames[i+1]) for i in range(n)]),
-                Not(fots.safety(frames[n]))
+                And([sfots.trans(frames[i], frames[i+1]) for i in range(n)]),
+                Not(sfots.safety(frames[n]))
             ) for n in range(k)])
         )
 
@@ -312,7 +318,7 @@ def PDR(
         # begin: attempt to prove each proof obligation using k-induction
         if pd:
             for o in O_prev:
-                # TODO Não sei exatamente como substituir o o[n] por Not(fots.safety(frames[n]))
+                # TODO Não sei exatamente como substituir o o[n] por Not(sfots.safety(frames[n]))
                 base_case_o = And(
                     init,
                     Or([And(
@@ -327,10 +333,10 @@ def PDR(
 
                 # begin: check the inductive-step case to prove o
                 #
-                #   fots.safety(s_n) ⋀_{i=n}^{n+k-1}(P(s_i) ∧ T(s_i,s_{i+1})) ∧ ¬P(s_{n+k})
+                #   sfots.safety(s_n) ⋀_{i=n}^{n+k-1}(P(s_i) ∧ T(s_i,s_{i+1})) ∧ ¬P(s_{n+k})
                 #
                 step_case_o = And(
-                    And([And(at(o, frames[i]), fots.trans(frames[i], frames[i+1])) for i in range(k)]),
+                    And([And(at(o, frames[i]), sfots.trans(frames[i], frames[i+1])) for i in range(k)]),
                     Not(at(o, frames[k]))
                 )
                 ExternalInv = get_currently_known_invariant()
@@ -341,7 +347,7 @@ def PDR(
                     # satisfying predecessor state
                     model = get_model(stepFormula)
                     s_o = And([EqualsOrIff(name, val) for name, val in model])
-                    cti = craig_interpolation(fots, k, Inv, o, s_o)
+                    cti = craig_interpolation(sfots, k, Inv, o, s_o)
                     if cti:
                         Obligations += [Not(cti)]
                 else:
@@ -350,8 +356,8 @@ def PDR(
 
         # begin: check the inductive-step case for the safety property P
         step_case_n = And(
-            And([And(fots.safety(frames[i]), fots.trans(frames[i], frames[i+1])) for i in range(k)]),
-            Not(fots.safety(frames[k]))
+            And([And(sfots.safety(frames[i]), sfots.trans(frames[i], frames[i+1])) for i in range(k)]),
+            Not(sfots.safety(frames[k]))
         )
         ExternalInv = get_currently_known_invariant()
         Inv = And(InternalInv, ExternalInv)
@@ -362,7 +368,7 @@ def PDR(
                 # satisfying predecessor state
                 model = get_model(stepFormula)
                 s = And([EqualsOrIff(name, val) for name, val in model])
-                cti = craig_interpolation_f(fots, k, Inv, fots.safety, s)
+                cti = craig_interpolation_f(sfots, k, Inv, sfots.safety, s)
                 if cti:
                     Obligations += [Not(cti)]
         else:
@@ -435,11 +441,8 @@ if __name__ == "__main__":
 
 
     # ---------------- Testes ----------------
-    # form = BVUGT(BVMul(BV(65534, 16), BV(2, 16)), BV(65534, 16))
-    # model = get_model(form)
-
-    multiplication = FOTS(bit_vector_multiplication, state)
-    loop = FOTS(simple_loop, state_loop)
+    multiplication = SFOTS(bit_vector_multiplication, state)
+    loop = SFOTS(simple_loop, state_loop)
 
     print("\nBMC")
     bmc_always(multiplication, 15)

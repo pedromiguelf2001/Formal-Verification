@@ -13,26 +13,11 @@ Pretende-se construir um programa Python que
 
 **GIC**
 ```
-ProgramaInit : Programa ENDMARKER
-Programa : Decls Corpo
-         | Corpo
-Decls    : Decl Newline
-         | Decls Decl Newline
-Decl     : INTDec ID
-         | INTDec ID ATRIB NUM
-         | INTDec ID ATRIB Input
-Corpo    : Proc Newline
-         | Corpo Proc
-         | ε
-Proc     : Atrib
-         | Print
-         | If
-Var      : ID
-
-
-
 Init   : Cond
        | Atribs
+       | Empty
+
+Empty  : \epsilon
 
 Cond   : Expre GT Expre
        | Expre LT Expre
@@ -58,20 +43,4 @@ Expre  : ID
        | Expre MUL Expre
        | Expre MOD Expre
        | LParen Expre RParen
-
-SimpleInit: Atribs
-
-Atribs    : Atrib ';'
-          | Atribs Atrib ';'
-
-Atrib     : ID ATRIB Expr
-
-Expr      : ID
-          | NUM
-          | Expr SUM Expr
-          | Expr SUB Expr
-          | Expr DIV Expr
-          | Expr MUL Expr
-          | Expr MOD Expr
-          | LParen Expre RParen
 ```

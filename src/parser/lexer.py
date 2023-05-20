@@ -54,8 +54,6 @@ class LexerPySMT(object):
 
     t_ignore = ' \n\t\r'
 
-
-
     def __init__(self, debug=0, optimize=0, lextab='lextab', reflags=0):
         self.lexer = lex.lex(module=self, debug=debug, optimize=optimize, lextab=lextab, reflags=reflags)
         self.token_stream = None
