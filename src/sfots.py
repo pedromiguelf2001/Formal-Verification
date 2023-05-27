@@ -12,6 +12,8 @@ class SFOTS(object):
         self.compiler = ParserPySMT()
         self.plotter = Plotter(cfa)
         self.cfa = cfa
+        # add pc to variables
+        state["variables"] += [self.PROGRAM_COUNTER]
         self.state = state
         self.initialNode = self.findStartNode(self.cfa)
         self.indices = {key: BV(i, 16) for i, key in enumerate(self.cfa.keys())}
@@ -260,7 +262,7 @@ def craig_interpolation_f(sfots, k, Inv, Q, s):
 def PDR(
     sfots,
     k_init = 1,
-    k_max = 15,#int(float('inf')),
+    k_max = 15,
     inc = lambda n: n + 1,
     get_currently_known_invariant=lambda: TRUE(),
     pd = True,
@@ -281,7 +283,6 @@ def PDR(
 
 
     while k <= k_max:
-        print("k = ", k)
         frames = [sfots.declare(i) for i in range(k+1)]
         transUntil = lambda n : [sfots.trans(frames[i], frames[i+1]) for i in range(n)]
         init = sfots.init(frames[0])
@@ -450,4 +451,3 @@ if __name__ == "__main__":
     kinduction_always(multiplication, 15)
     print("\nInterpolants")
     model_checking_Interpolants(multiplication, 20, 20, 15)
-

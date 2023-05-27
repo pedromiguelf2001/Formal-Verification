@@ -17,7 +17,7 @@ class Plotter:
                 edge_list.append(edge)
         return edge_list, edge_labels
 
-    def plot_cfa(self):
+    def plot(self):
         G = nx.MultiDiGraph()
         G.add_edges_from(self.edge_list)
         pos = nx.nx_pydot.graphviz_layout(G, prog="dot")
@@ -109,4 +109,4 @@ if __name__ == "__main__":
         )
     }
 
-    Plotter(simple_loop).plot_cfa()
+    Plotter(simple_loop).plot()

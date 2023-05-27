@@ -2,6 +2,10 @@ import ply.lex as lex
 import sys
 
 class LexerPySMT(object):
+    reserved = {
+        'pc' : 'PC'
+    }
+
     tokens = [
         'NUM',
         'ID',
@@ -22,7 +26,7 @@ class LexerPySMT(object):
         'DIV',
         'MULT',
         'MOD'
-    ]
+    ] + list(reserved.values())
 
     literals = [';']
 
@@ -50,6 +54,8 @@ class LexerPySMT(object):
     
     def t_ID(self, t):
         r'\w+'
+        if t.value == 'pc':
+            raise Exception('pc is a reserved word')
         return t
 
     t_ignore = ' \n\t\r'
